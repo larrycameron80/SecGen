@@ -160,6 +160,7 @@ class parameterised_website::install {
     file{ "$docroot/security_audit_remit.html":
       ensure  => file,
       content => template('parameterised_website/security_audit_remit_page.html.erb'),
+
     }
   }
 

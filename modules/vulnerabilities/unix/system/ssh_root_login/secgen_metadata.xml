@@ -36,6 +36,10 @@
   <solution>Use a ssh bruteforce/dictionary cracker, connect with ssh root@victim-IP-address
   </solution>
 
+  <!--<attack>-->
+    <!--<required_attack_software>sshpass</required_attack_software>-->
+    <!--<command>sshpass -p {{root_password}} ssh -oStrictHostKeyChecking=no root@{{IP_address}}</command>-->
+  <!--</attack>-->
   <!--<attack_command>sshpass -p {{root_password}} ssh -oStrictHostKeyChecking=no root@{{IP_address}}</attack_command>-->
 
 </vulnerability>

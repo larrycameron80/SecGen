@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+
+<scenario xmlns="http://www.github/cliffe/SecGen/scenario"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.github/cliffe/SecGen/scenario">
+
+	<system>
+		<system_name>desktop</system_name>
+		<base platform="linux" distro="Debian 7.8"/>
+
+		<!--generate two accounts, YOU and someone else-->
+		<input into_datastore="accounts">
+			<generator type="account">
+				<input into="username">
+					<value>fred</value>
+				</input>
+				<input into="password">
+					<value>test</value>
+				</input>
+				<input into="super_user">
+					<value>false</value>
+				</input>
+				<input into="leaked_filenames">
+					<value>trade_secrets</value>
+					<value>personal_secrets</value>
+				</input>
+				<input into="strings_to_leak">
+					<value>`$=`;$_=\%!;($_)=/(.)/;$==++$|;($.,$/,$,,$\,$",$;,$^,$#,$~,$*,$:,@%)=(
+						$!=~/(.)(.).(.)(.)(.)(.)..(.)(.)(.)..(.)......(.)/,$"),$=++;$.++;$.++;
+						$_++;$_++;($_,$\,$,)=($~.$"."$;$/$%[$?]$_$\$,$:$%[$?]",$"&$~,$#,);$,++
+						;$,++;$^|=$";`$_$\$,$/$:$;$~$*$%[$?]$.$~$*${#}$%[$?]$;$\$"$^$~$*.>&$=`</value>
+					<value>Visa	4111 1111 1111 1111</value>
+				</input>
+			</generator>
+			<generator type="account">
+				<input into="username">
+					<value>tom</value>
+				</input>
+				<input into="password">
+					<value>test</value>
+				</input>
+				<input into="super_user">
+					<value>false</value>
+				</input>
+				<input into="leaked_filenames">
+					<value></value>
+				</input>
+				<input into="strings_to_leak">
+					<value></value>
+				</input>
+			</generator>
+		</input>
+
+		<utility module_path=".*kde_minimal"/>
+		<utility module_path=".*iceweasel" />
+
+		<!--TODO Pidgin-->
+
+		<utility module_path=".*parameterised_accounts">
+			<input into="accounts">
+				<datastore>accounts</datastore>
+			</input>
+		</utility>
+
+		<vulnerability module_path=".*ssh_root_login">
+			<input into="root_password">
+				<value>randompassword</value>
+			</input>
+		</vulnerability>
+
+		<network type="private_network" range="dhcp"/>
+	</system>
+
+	<system>
+		<system_name>server</system_name>
+		<base platform="linux" distro="Debian 7.8"/>
+
+		<utility module_path=".*parameterised_accounts">
+			<input into="accounts">
+				<datastore>accounts</datastore>
+			</input>
+		</utility>
+
+		<vulnerability module_path=".*ssh_root_login">
+			<input into="root_password">
+				<value>randompassword</value>
+			</input>
+		</vulnerability>
+
+		<!--TODO: parameterise with business details-->
+		<service module_path="services/unix/http/parameterised_website"/>
+		<service type="ftp"/>
+
+		<network type="private_network" range="dhcp"/>
+	</system>
+
+	<!--TODO: Kali hackerbot vm-->
+
+</scenario>
