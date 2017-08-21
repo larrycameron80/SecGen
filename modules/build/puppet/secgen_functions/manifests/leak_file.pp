@@ -8,7 +8,7 @@ define secgen_functions::leak_file($leaked_filename, $storage_directory, $string
     # create the directory tree, incase the file name has extra layers of directories
     exec { "$leaked_from-$path_to_leak":
       path    => ['/bin', '/usr/bin', '/usr/local/bin', '/sbin', '/usr/sbin'],
-      command => "mkdir -p `dirname $path_to_leak`",
+      command => "mkdir -p `dirname $path_to_leak`;chown $owner. `dirname $path_to_leak`",
       provider => shell,
     }
 

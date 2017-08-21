@@ -9,6 +9,10 @@ class ssh_root_login::init {
     ensure => "installed",
   }
 
+  package { "sshpass":
+    ensure => "installed",
+  }
+
   service { "ssh":
     ensure    => running,
     hasstatus => true,

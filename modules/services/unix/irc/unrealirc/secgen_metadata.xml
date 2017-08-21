@@ -10,7 +10,7 @@
     UnrealIRCd 3.2.8.1
   </description>
 
-  <type>irc</type>
+  <type>ircd</type>
   <platform>linux</platform>
 
   <read_fact>port</read_fact>
