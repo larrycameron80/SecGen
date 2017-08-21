@@ -67,10 +67,12 @@ Diner's Club	3000 0000 0000 04</value>
 			</generator>
 		</input>
 
-<!--		<utility module_path=".*kde_minimal"/>
-		<utility module_path=".*iceweasel" />-->
+		<!--TODO: reboot desktop VM after installing desktop env-->
+		<utility module_path=".*kde_minimal"/>
+		<utility module_path=".*iceweasel" />
 
 		<!--TODO Pidgin-->
+		<utility module_path=".*weechat"/>
 
 		<utility module_path=".*parameterised_accounts">
 			<input into="accounts">
@@ -104,12 +106,24 @@ Diner's Club	3000 0000 0000 04</value>
 		</vulnerability>
 
 		<!--TODO: parameterise with business details-->
+		<!--TODO: weechat config-->
+		<utility module_path=".*weechat"/>
+		<!--TODO: sshpass-->
 		<service module_path="services/unix/http/parameterised_website"/>
 		<service type="ftp"/>
 
 		<network type="private_network" range="dhcp"/>
 	</system>
 
-	<!--TODO: Kali hackerbot vm-->
+	<!--TODO: Kali hackerbot vm, kali-->
+	<!--TODO: sshpass needs to be installed with the Hackerbot, not on the vuln system-->
+	<system>
+		<system_name>hackerbot_server</system_name>
+		<base platform="linux"/>
+
+		<service type="ircd"/>
+
+		<network type="private_network" range="dhcp"/>
+	</system>
 
 </scenario>
