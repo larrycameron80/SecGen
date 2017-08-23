@@ -65,7 +65,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     <% end %>
 <%   when 'network' -%>
 <%     if selected_module.attributes['range'].first.nil? || selected_module.attributes['range'].first == "dhcp" -%>
-    <%= system.name %>.vm.network :<%= selected_module.attributes['type'].first %>, type: "dhcp"
+    <%= system.name %>.vm.network :<%= selected_module.attributes['type'].first %>, type: "dhcp", auto_config: false
 <%     else -%>
     <%= system.name %>.vm.network :<%= selected_module.attributes['type'].first %>, ip: "<%= resolve_network(selected_module.attributes['range'].first)%>"
 <%     end -%>
