@@ -1,5 +1,5 @@
 class metasploit_framework::install{
-  package { ['postgesql','metasploit-framework']:
+  package { ['metasploit-framework']:
     ensure => 'installed',
   }
 }

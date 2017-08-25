@@ -126,6 +126,8 @@ Diner's Club	3000 0000 0000 04</value>
  		<utility module_path=".*metasploit_framework"/>
 		<utility module_path=".*nmap"/>
 
+		<utility module_path=".*hackerbot"/>
+
 		<network type="private_network" range="dhcp"/>
 	</system>
 
