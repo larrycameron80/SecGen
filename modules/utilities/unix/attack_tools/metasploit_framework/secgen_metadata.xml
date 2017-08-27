@@ -14,4 +14,7 @@
   <requires>
     <type>attack</type>
   </requires>
+  <requires>
+    <type>update</type>
+  </requires>
 </utility>

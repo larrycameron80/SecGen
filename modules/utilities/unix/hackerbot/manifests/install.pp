@@ -8,10 +8,13 @@ class hackerbot::install{
     provider => 'gem',
   }
 
-  file { 'hackerbot files':
-    path => '/opt/hackerbot/',
-    ensure => recursive,
-    source => 'puppet:///modules/hackerbot/opt_hackerbot/',
+  file { '/opt/hackerbot':
+    ensure => directory,
+    recurse => true,
+    source => 'puppet:///modules/hackerbot/opt_hackerbot',
+    mode   => '0600',
+    owner => 'root',
+    group => 'root',
   }
 
 }
