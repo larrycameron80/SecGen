@@ -17,4 +17,13 @@ class hackerbot::install{
     group => 'root',
   }
 
+  file { '/etc/systemd/system/hackerbot.service':
+    ensure => 'link',
+    target => '/opt/hackerbot/hackerbot.service',
+  }~>
+  exec { 'hackerbot-systemd-reload':
+    command     => 'systemctl daemon-reload',
+    path        => [ '/usr/bin', '/bin', '/usr/sbin' ],
+    refreshonly => true,
+  }
 }
