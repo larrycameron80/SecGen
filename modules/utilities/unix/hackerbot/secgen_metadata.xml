@@ -15,6 +15,12 @@
 
   <software_license>GPLv3</software_license>
 
+  <read_fact>server_ip</read_fact>
+
+  <default_input into="server_ip">
+    <value>localhost</value>
+  </default_input>
+
   <requires>
     <type>update</type>
   </requires>
