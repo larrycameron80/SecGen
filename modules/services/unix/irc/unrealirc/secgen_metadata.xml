@@ -13,8 +13,12 @@
   <type>ircd</type>
   <platform>linux</platform>
 
+  <read_fact>ip</read_fact>
   <read_fact>port</read_fact>
 
+  <default_input into="ip">
+    <value>*</value>
+  </default_input>
   <default_input into="port">
     <value>6667</value>
   </default_input>

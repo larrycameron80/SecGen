@@ -1,4 +1,3 @@
- 
 [Unit]
 Description=Hackerbot IRC attack chatbot (SecGen project)
 After=network.target
