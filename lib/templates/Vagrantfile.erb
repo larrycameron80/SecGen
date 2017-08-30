@@ -46,6 +46,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end -%>
     end
 
+    # Optimise package caching (re-use downloaded .deb, ruby gems, etc)
+    if Vagrant.has_plugin?("vagrant-cachier")
+      # Configure cached packages to be shared between instances of the same base box.
+      # More info on http://fgrehm.viewdocs.io/vagrant-cachier/usage
+      config.cache.scope = :box
+    end
+
     # SecGen datastore
     # <%= JSON.generate($datastore) %>
 

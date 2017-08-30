@@ -143,7 +143,10 @@ def read_bots (irc_server_ip_address)
           end
 
           if quiz != nil
-            correct_answer = quiz['answer'].gsub(/{{post_command_output}}/, bots[bot_name]['attacks'][current]['post_command_output'])
+            correct_answer = quiz['answer'].
+                gsub(/{{post_command_output}}/, bots[bot_name]['attacks'][current]['post_command_output']).
+                gsub(/{{shell_command_output_first_line}}/, bots[bot_name]['attacks'][current]['get_shell_command_output'].split("\n").first)
+
             if answer.match(correct_answer)
               m.reply bots[bot_name]['messages']['correct_answer']
               m.reply quiz['correct_answer_response']
@@ -258,6 +261,7 @@ def read_bots (irc_server_ip_address)
               end
             rescue # continue consuming until input blocks
             end
+            bots[bot_name]['attacks'][current]['get_shell_command_output'] = lines
 
             Print.debug lines
             if lines =~ /shelltest/i

