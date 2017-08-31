@@ -16,8 +16,13 @@
   <software_license>GPLv3</software_license>
 
   <read_fact>server_ip</read_fact>
+  <read_fact>hackerbot_configs</read_fact>
 
   <default_input into="server_ip">
+    <value>localhost</value>
+  </default_input>
+
+  <default_input into="hackerbot_configs">
     <value>localhost</value>
   </default_input>
 
