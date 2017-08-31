@@ -85,8 +85,9 @@ Diner's Club	3000 0000 0000 04</value>
 		</input>
 
 		<!--TODO: reboot desktop VM after installing desktop env-->
+		<!--TODO: create a basebox, it takes over 10 mins to install KDE-->
 		<utility module_path=".*kde_minimal"/>
-		<utility module_path=".*iceweasel" />
+		<utility module_path=".*iceweasel"/>
 
 		<utility module_path=".*parameterised_accounts">
 			<input into="accounts">
@@ -112,44 +113,39 @@ Diner's Club	3000 0000 0000 04</value>
 		<network type="private_network" range="172.16.0.0"/>
 	</system>
 
-	<system>
-		<system_name>server</system_name>
-		<base platform="linux" distro="Debian 7.8"/>
+	<!--<system>-->
+		<!--<system_name>server</system_name>-->
+		<!--<base platform="linux" distro="Debian 7.8"/>-->
 
-		<utility module_path=".*parameterised_accounts">
-			<input into="accounts">
-				<datastore>accounts</datastore>
-			</input>
-		</utility>
+		<!--<utility module_path=".*parameterised_accounts">-->
+			<!--<input into="accounts">-->
+				<!--<datastore>accounts</datastore>-->
+			<!--</input>-->
+		<!--</utility>-->
 
-		<vulnerability module_path=".*ssh_root_login">
-			<input into="root_password">
-				<value>randompassword</value>
-			</input>
-		</vulnerability>
+		<!--<vulnerability module_path=".*ssh_root_login">-->
+			<!--<input into="root_password">-->
+				<!--<value>randompassword</value>-->
+			<!--</input>-->
+		<!--</vulnerability>-->
 
-		<!--TODO: parameterise with business details-->
-		<!--TODO: weechat config-->
-		<utility module_path=".*weechat"/>
-		<!--TODO: sshpass-->
-		<service module_path="services/unix/http/parameterised_website"/>
-		<service type="ftp"/>
+		<!--&lt;!&ndash;TODO: parameterise with business details&ndash;&gt;-->
+		<!--&lt;!&ndash;TODO: weechat config&ndash;&gt;-->
+		<!--<utility module_path=".*weechat"/>-->
 
-		<network type="private_network" range="172.16.0.0"/>
-	</system>
+		<!--<service module_path="services/unix/http/parameterised_website"/>-->
+		<!--<service type="ftp"/>-->
 
-	<!--TODO: Kali hackerbot vm, kali-->
-	<!--TODO: sshpass needs to be installed with the Hackerbot, not on the vuln system-->
+		<!--<network type="private_network" range="172.16.0.0"/>-->
+	<!--</system>-->
+
 	<system>
 		<system_name>hackerbot_server</system_name>
 		<base distro="Kali"/>
 
-		<service type="ircd">
-			<input into="ip">
-				<value>172.16.0.4</value>
-			</input>
-		</service>
-        
+		<service type="ircd"/>
+
+		<!--TODO: a basebox with this (it takes 13 mins to install via modules)-->
 		<utility module_path=".*metasploit_framework"/>
 		<utility module_path=".*nmap"/>
 

@@ -85,7 +85,7 @@
 	</messages>
 
 	<attack>
-<%= $file = $files.sample -%>
+<% $file = $files.sample -%>
 		<prompt>An attempt to delete /home/<%= $main_user %>/<%= $file %> is coming. Stop the attack using access controls.</prompt>
 
 		<post_command>rm --interactive=never /home/<%= $main_user %>/<%= $file %>; echo $?</post_command>
@@ -108,7 +108,7 @@
 	</attack>
 
 	<attack>
-<%= $file = $files.sample -%>
+<% $file = $files.sample -%>
 		<prompt>An attempt to delete /home/<%= $main_user %>/<%= $file %> is coming. Stop the attack using access controls.</prompt>
 
 		<post_command>rm --interactive=never /home/<%= $main_user %>/<%= $file %>; echo $?</post_command>
@@ -131,7 +131,7 @@
 	</attack>
 
 	<attack>
-<%= $log_file = $log_files.sample -%>
+<% $log_file = $log_files.sample -%>
 		<!--<topic>Protecting integrity with file attributes</topic>-->
 		<prompt>An attempt to delete /home/<%= $main_user %>/<%= $log_file %> is coming. Stop the attack using file attributes.</prompt>
 
@@ -159,7 +159,7 @@
 	</attack>
 
 	<attack>
-<%= $log_file = $log_files.sample -%>
+<% $log_file = $log_files.sample -%>
 		<!--<topic>Protecting integrity with file attributes</topic>-->
 		<prompt>An attempt to overwrite /home/<%= $main_user %>/<%= $log_file %> is coming. Stop the attack by making the file append only.</prompt>
 
@@ -202,7 +202,7 @@
 	</attack>
 
 	<attack>
-<%= $random_user = SecureRandom.hex -%>
+<% $random_user = SecureRandom.hex -%>
 		<!--<topic>Detecting changes to resources using backups</topic>-->
 		<prompt>An attempt to add a new user is coming, let it happen. But first create a backup of /etc/passwd.</prompt>
 
@@ -287,7 +287,7 @@
 	</attack>
 
 	<attack>
-<%= $random = SecureRandom.hex -%>
+<% $random = SecureRandom.hex -%>
 
 		<!--<topic>File integrity checkers</topic>-->
 		<prompt>Creating a new file in /home/<%= $main_user %>/...</prompt>
