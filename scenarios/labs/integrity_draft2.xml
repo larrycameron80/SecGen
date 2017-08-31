@@ -155,8 +155,8 @@ Diner's Club	3000 0000 0000 04</value>
 
 		<utility module_path=".*hackerbot">
 			<input into="hackerbot_configs">
-				<generator module_path="example_bot"/>
-				<generator module_path="integrity_lab"/>
+				<generator module_path=".*example_bot"/>
+				<generator module_path=".*integrity_lab"/>
 			</input>
 		</utility>
 
