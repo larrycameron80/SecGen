@@ -88,6 +88,7 @@ Diner's Club	3000 0000 0000 04</value>
 		<!--TODO: create a basebox, it takes over 10 mins to install KDE-->
 		<utility module_path=".*kde_minimal"/>
 		<utility module_path=".*iceweasel"/>
+		<utility module_path=".*handy_cli_tools"/>
 
 		<utility module_path=".*parameterised_accounts">
 			<input into="accounts">
@@ -97,7 +98,7 @@ Diner's Club	3000 0000 0000 04</value>
 
 		<utility module_path=".*pidgin">
 			<input into="server_ip">
-				<value>172.16.0.4</value>
+				<value>172.16.0.3</value>
 			</input>
 			<input into="accounts">
 				<datastore access="0">accounts</datastore>
@@ -148,15 +149,26 @@ Diner's Club	3000 0000 0000 04</value>
 		<!--TODO: a basebox with this (it takes 13 mins to install via modules)-->
 		<utility module_path=".*metasploit_framework"/>
 		<utility module_path=".*nmap"/>
+		<utility module_path=".*handy_cli_tools"/>
 
+		<!--TODO: fix hackerbot to have threads for each bot defined-->
 		<utility module_path=".*hackerbot">
 			<input into="hackerbot_configs">
-				<generator module_path=".*example_bot"/>
-				<generator module_path=".*integrity_lab"/>
+				<generator module_path=".*integrity_lab">
+					<input into="accounts">
+						<datastore>accounts</datastore>
+					</input>
+					<input into="root_password">
+						<value>randompassword</value>
+					</input>
+				</generator>
 			</input>
 		</utility>
 
 		<network type="private_network" range="172.16.0.0"/>
+
+		<!--TODO: reboot VM to fix networking?-->
+		<!--TODO: pass in account information into hackerbot config-->
 	</system>
 
 </scenario>
