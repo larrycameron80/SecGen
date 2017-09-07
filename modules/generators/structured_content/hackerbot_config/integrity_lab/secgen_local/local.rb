@@ -2,6 +2,7 @@
 require_relative '../../../../../../lib/objects/local_string_generator.rb'
 require 'erb'
 require 'fileutils'
+require 'nori'
 class HackerbotConfigGenerator < StringGenerator
   attr_accessor :accounts
   attr_accessor :flags
@@ -35,10 +36,20 @@ class HackerbotConfigGenerator < StringGenerator
     end
   end
 
+  # def generate_lab_sheet(xml_config)
+  #   # parsed = Nori.new.parse(xml_config)
+  #   # lab_sheet = parsed[tutorial]
+  #   # Print.debug lab_sheet
+  #
+  # end
+
   def generate
 
     template_out = ERB.new(File.read(TEMPLATE_PATH), 0, '<>-')
-    self.outputs << template_out.result(self.get_binding)
+    xml_config = template_out.result(self.get_binding)
+    # labsheet = generate_lab_sheet(xml_config)
+
+    self.outputs << xml_config
   end
 
   # Returns binding for erb files (access to variables in this classes scope)

@@ -2,11 +2,24 @@
   require 'json'
   require 'securerandom'
   require 'digest/sha1'
+  require 'fileutils'
 
-  $first_account = JSON.parse(self.accounts.first)
+  if self.accounts.empty?
+    abort('Sorry, you need to provide an account')
+  end
 
-  $files = $first_account['leaked_filenames']
-  $log_files = $first_account['leaked_filenames'].grep(/log/)
+  #  TODO: this is broken
+  puts self.accounts.to_s
+  puts self.accounts.first.to_s
+  $first_account = JSON.parse(self.accounts).first.first
+  puts $first_account.to_s
+  $files = []
+  $log_files = []
+  if $first_account.key?("leaked_filenames") &&  $first_account['leaked_filenames'].size > 0
+    $files = $first_account['leaked_filenames']
+    $log_files = $first_account['leaked_filenames'].grep(/log/)
+  end
+
   if $files.empty?
     $files = ['file1', 'file2']
   end
@@ -89,54 +102,46 @@
 		<introduction>
 # Integrity Management: Protecting Against and Detecting Change
 
+## For marks in the module:
+1. **You need to submit flags**. Note that the flags and the challenges in your VMs are different to other's in the class. Flags will be revealed to you as you complete challenges throughout the module.
+Flags look like this:
+> flag{somethingrandom}
+2. **You need to document the work and your solutions in a workbook**. This needs to include screenshots (including the flags) of how you solved each challenge and a writeup describing your solution to each challenge, and answering "Questions". The workbook will be submitted later in the semester.
+
 ## Integrity
 
-Security is often described in terms of confidentiality, integrity, and
-availability. Protecting the integrity of information involves
-preventing and detecting unauthorised changes. In many commercial
-organisations integrity of information is the highest priority security
-goal. Managing who is authorised to make changes to databases or files,
-and monitoring the integrity of resources for unauthorised changes is an
-important task in managing information security.
+Security is often described in terms of confidentiality, integrity, and availability. Protecting the integrity of information involves preventing and detecting unauthorised changes. In many commercial organisations integrity of information is the highest priority security goal. Managing who is authorised to make changes to databases or files, and monitoring the integrity of resources for unauthorised changes is an important task in managing information security.
 
 ## Protecting integrity
 
-Protecting the integrity of resources, such as the files on a system,
-involves successfully managing a variety of security mechanisms, such as
-authentication, access controls and file permissions, firewalls, and so
-on.
+Protecting the integrity of resources, such as the files on a system, involves successfully managing a variety of security mechanisms, such as authentication, access controls and file permissions, firewalls, and so on.
 
-> On Linux systems this can include managing passwords, packet filtering
-> IPTables rules, standard Unix file permissions (rwx), Linux extended
-> attributes (including ACLs for detailed authentication, labels for
-> mandatory access control (MAC), and Linux Capabilities). Linux (like
-> other Unix-like and Unix-based systems) has a long history of adding
-> new security features as and when they are required.
+> On Linux systems this can include managing passwords, packet filtering IPTables rules, standard Unix file permissions (rwx), Linux extended attributes (including ACLs for detailed authentication, labels for mandatory access control (MAC), and Linux Capabilities). Linux (like other Unix-like and Unix-based systems) has a long history of adding new security features as and when they are required.
 >
-> Note that many security controls such as those listed above are very
-> important for protecting the integrity of files, but are beyond the
-> scope of this lab. Here the focus is on techniques that are *entirely*
-> focussed on integrity rather than confidentiality or availability.
+> Note that many security controls such as those listed above are very important for protecting the integrity of files, but are beyond the scope of this lab. Here the focus is on techniques that are *entirely* focussed on integrity rather than confidentiality or availability.
 
-There are precautions that can be taken to reduce the chances of
-unauthorised changes.
+There are precautions that can be taken to reduce the chances of unauthorised changes.
 
-# Getting started
+## Getting started
 
 ###### Action:
 Start the VMs:
-- hackerbot_server (just leave it running, you don't log into this)
-- desktop
+- hackerbot_server (leave it running, you don't log into this)
+- desktop (login with username: dropbear, password: tisapbiqe2r)
 
-# Meet Hackerbot!
-This exercise involves interacting with Hackerbot, a chatbot who will
-attack your system. If you satisfy Hackerbot by completing the challenges
-she will reveal flags to you.
+## Meet Hackerbot!
+This exercise involves interacting with Hackerbot, a chatbot who will attack your system. If you satisfy Hackerbot by completing the challenges she will reveal flags to you.
 
-# For marks
-*You need to keep track of these flags yourself* to submit the flags for marks.
+###### On the desktop VM:
+###### Action:
+Open Pidgin and send a message to Hackerbot.
 
-You need to screenshot your progress, and document these in a write up document, which you will submit later in the semester.
+Try asking Hackerbot some questions.
+
+###### Action:
+Send "hello"
+
+Hackerbot will start you on your journey!
 
 		</introduction>
 		<footer>
@@ -177,6 +182,37 @@ Generated by SecGen
 		<else_condition>
 			<message>:( Something was not right...</message>
 		</else_condition>
+
+		<tutorial>
+### Protecting integrity with file permissions
+#### Getting to know file permissions
+Open a terminal console (such as Konsole from KDEMenu → Applications → System → Konsole).
+
+Start by creating a file with some content. Run:
+
+```bash
+sudo bash -c 'cat > /var/log/mylogfile'
+```
+> (Type some content, then press Ctrl-D to finish and return to the
+prompt.)
+
+Look at the details of the file:
+
+```bash
+ls -la /var/log/mylogfile
+```
+``
+ -rw-r--r-- 1 root root 20 Feb 7 17:38 /var/log/mylogfile
+``
+
+As we can see above, the file is owned by root, who has read-write access.
+
+#### Hackerbot (flags)
+
+The Hackerbot is warning you about an attempt to delete a file. Stop the attack using what you have learned.
+
+Exploring Unix file permissions further is outside the scope of this lab, but will be covered elsewhere.
+		</tutorial>
 	</attack>
 
 	<attack>
@@ -205,6 +241,73 @@ Generated by SecGen
 		<else_condition>
 			<message>:( Something was not right...</message>
 		</else_condition>
+
+		<tutorial>
+### Protecting integrity with file attributes
+#### Getting to know file attributes
+Unix systems (such as Linux or FreeBSD) include file attributes that, amongst other features, can make files immutable or append only. Setting these file attributes can provide an effective layer of security, and yet could be considered one of the more obscure Unix security features[^1]. Note that this feature is dependent on the use of a compatible filesystem (most Unix filesystems, such as ext, are compatible with file attributes). Once configured, file attributes can even prevent root (the all-powerful Unix superuser) from making changes to certain files.
+
+[^1]: Setting a file to immutable (and therefore impossible to simply delete) can be an effective prank against the uninitiated in Unix ways.
+
+Run:
+```bash
+lsattr /var/log/mylogfile
+```
+``
+ -------------e- /var/log/mylogfile
+``
+
+The ‘e’ flag is common on ext filesystems, may or may not be present when you run the above, and does not really concern us. From a security perspective the ‘a’ and ‘i’ flags are the most interesting. Read the man page for chattr to find out more about these flags and what they do:
+
+```bash
+man chattr
+```
+> (Press q to leave the manual page)
+
+Set the ‘i’ flag using the chattr command:
+```bash
+sudo chattr +i /var/log/mylogfile
+```
+
+Now try to delete the file and see what happens:
+```bash
+rm /var/log/mylogfile
+```
+Denied! Opps, that’s right, root owns the file (since you created it with sudo)! Use root to try to delete the file:
+```bash
+sudo rm /var/log/mylogfile
+```
+
+It still didn’t work! That’s right, even root can’t delete the file, without changing the file’s attributes back first.
+
+Use some commands to remove the ‘i’ flag (hint: “-i”, instead of “+i”).
+
+Now run a command to set the ‘a’ flag on /var/log/mylogfile.
+
+If you have done so correctly, attempting to overwrite the file with a test message should fail:
+```bash
+sudo bash -c 'echo "test message" > /var/log/mylogfile'
+```
+> This should produce an error, since ‘&gt;’ causes the output of the program to be written to the specified log file, which is not allowed due to the chattr command you have run.
+
+Yet you should be able to append messages to the end of the file:
+
+```bash
+sudo bash -c 'echo "YOURNAME: test message" >> /var/log/mylogfile'
+```
+> This should succeed, since ‘&gt;&gt;’ causes the output of the program to be appended (added to the end of) to the specified log file, which is allowed. Use your name above, for example “echo "Cliffe: test message" &gt;&gt; /var/log/mylogfile”.
+
+View your changes at the end of the file:
+
+> tail /var/log/mylogfile
+
+This has obvious security benefits, this feature can be used to allow files to be written to without altering existing content. For example, for ensuring that log files can be written to, but avoiding giving everyone who can write to the file the ability to alter its contents.
+
+#### Hackerbot (flags)
+
+The Hackerbot is warning you about an attack. Stop the attack using what you have learned.
+
+		</tutorial>
 	</attack>
 
 	<attack>
@@ -229,6 +332,10 @@ Generated by SecGen
 		<else_condition>
 			<message>:( Something was not right...</message>
 		</else_condition>
+		<tutorial>
+#### Hackerbot (flags)
+The Hackerbot is warning you about an attack. Stop the attack using what you have learned.
+		</tutorial>
 	</attack>
 
 	<attack>
@@ -248,6 +355,67 @@ Generated by SecGen
 		<else_condition>
 			<message>:( Something was not right...</message>
 		</else_condition>
+
+		<tutorial>
+### Protecting integrity with read-only filesystems
+#### Getting to know read-only bind mounting
+On Unix, a filesystem is mounted to a particular point in the directory structure; for example, a USB thumb drive may be mounted to /media/myUSB/. Some filesystems will automatically mount read-only; for example, if you insert a CD-ROM, since those disks are physically read-only. It is possible to optionally mount almost any filesystem, such as a USB or even a directory, in read-only mode, which will make it practically impossible to write changes to it (without remounting or accessing the drive/directory in other ways, which normally only root can do).
+
+In a command prompt, run:
+```bash
+mount
+```
+> Note that many of the devices and directories have been mounted for read and write access (**rw**). For security reasons, it can be safer to mount things as read-only, when we don’t need to be able to make changes to the contents.
+
+Ordinary users can only read the /etc directory but the superuser root who owns the /etc directory can read and write to it. In the following example, you are going to mount the /etc directory to a mount point (another directory within the filesystem) and the contents of the /etc directory will be accessible via the mount point.
+
+List the contents of the /etc directory so you are familiar with its contents:
+```bash
+ls /etc
+```
+Create a new directory to be the mount point:
+```bash
+mkdir /home/<%= $main_user %>/test
+```
+Mount the /etc directory to the new mount point:
+```bash
+sudo mount -o bind /etc /home/<%= $main_user %>/test
+```
+Make sure the /etc directory is accessible via the test directory mount point:
+```bash
+ls /home/<%= $main_user %>/test
+```
+Ordinary users can only read but the superuser root can still write to the directory. Test this by creating a new file as the superuser root in the /home/student/test directory:
+```bash
+sudo touch /home/<%= $main_user %>/test/file1
+```
+Check that a new file has been created using the following commands
+```bash
+ls -l /home/<%= $main_user %>/test/file1
+```
+```bash
+ls -l /etc/file1
+```
+We can use this techniques to make filesystems and directories read-only. In the next example you will remount the etc in read-only mode so that even the superuser root who owns the /etc directory cannot make changes to its contents via the mount point.
+```bash
+sudo mount -o remount,ro,bind /etc /home/<%= $main_user %>/test
+```
+Test this by trying creating a new file as the superuser root in the /home/<%= $main_user %>/test directory:
+```bash
+sudo touch /home/<%= $main_user %>/test/file2
+```
+This should prevent changes being accidently being made to important configuration files in the /etc directory.
+
+Remount the the /etc directory as read-only to itself:
+```bash
+sudo mount -o remount,ro,bind /etc /etc
+```
+Mounting read-only can be an effective way of protecting resources that you don’t need to make any changes to. Read-only mounting is particularly effective when an actual disk resides externally, and can be enforced remotely. For example, when sharing files over the network.
+
+> Note that mounting read-only may be circumvented by root (or a user with enough privilege) via direct access to the device files (/dev/sdc1 in the example above), or by re-mounting as read-write.
+
+> Aside: in new versions of Linux, it is also possible to have a directory (one part of what is on a disk) present in the directory structure twice with different mount options (for example, /home/<%= $main_user %> and /home/<%= $main_user %>-read-only). This can be achieved by bind mounting, and then remounting to set the bind mount to read only. More information: [http://lwn.net/Articles/281157/](http://lwn.net/Articles/281157/)
+		</tutorial>
 	</attack>
 
 	<attack>
