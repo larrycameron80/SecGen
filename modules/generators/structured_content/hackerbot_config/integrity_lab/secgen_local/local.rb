@@ -3,6 +3,8 @@ require_relative '../../../../../../lib/objects/local_string_generator.rb'
 require 'erb'
 require 'fileutils'
 require 'nori'
+require 'nokogiri'
+
 class HackerbotConfigGenerator < StringGenerator
   attr_accessor :accounts
   attr_accessor :flags
@@ -36,18 +38,52 @@ class HackerbotConfigGenerator < StringGenerator
     end
   end
 
-  # def generate_lab_sheet(xml_config)
-  #   # parsed = Nori.new.parse(xml_config)
-  #   # lab_sheet = parsed[tutorial]
-  #   # Print.debug lab_sheet
-  #
-  # end
+  def generate_lab_sheet(xml_config)
+    # parsed = Nori.new.parse(xml_config)
+    # Print.debug parsed.to_s
+    # lab_sheet = parsed['tutorial']['introduction']
+    # Print.debug lab_sheet
+    lab_sheet = ''
+    begin
+      doc = Nokogiri::XML(xml_config)
+    rescue
+      Print.err "Failed to process hackerbot config"
+      exit
+    end
+    # remove xml namespaces for ease of processing
+    doc.remove_namespaces!
+    # for each element in the vulnerability
+    # Print.debug doc.to_s
+    hackerbot = doc.xpath("/hackerbot")
+    name = hackerbot.xpath("name").first.content
+    lab_sheet += hackerbot.xpath("tutorial_info/tutorial").first.content + "\n"
+
+    doc.xpath("//attack").each_with_index do |attack, index|
+      attack.xpath("tutorial").each do |tutorial_snippet|
+        lab_sheet += tutorial_snippet.content + "\n"
+      end
+
+      lab_sheet += "#### #{name} Attack ##{index + 1}\n"
+      lab_sheet += "Use what you have learned to complete the bot's challenge. You can skip the bot to here, by saying '**goto #{index + 1}**'\n\n"
+      lab_sheet += "> #{name}: \"#{attack.xpath('prompt').first.content}\" \n\n"
+      lab_sheet += "Do any necessary preparation, then when you are ready for the bot to complete the action/attack, say '**ready**'\n\n"
+      if attack.xpath("quiz").size > 0
+        lab_sheet += "There is a quiz to complete. Once Hackerbot asks you the question you can '**answer YOURANSWER**'\n\n"
+      end
+
+    end
+    lab_sheet += hackerbot.xpath("tutorial_info/footer").first.content + "\n"
+
+    Print.debug lab_sheet
+    exit
+  end
 
   def generate
 
+    # Print.debug self.accounts.to_s
     template_out = ERB.new(File.read(TEMPLATE_PATH), 0, '<>-')
     xml_config = template_out.result(self.get_binding)
-    # labsheet = generate_lab_sheet(xml_config)
+    labsheet = generate_lab_sheet(xml_config)
 
     self.outputs << xml_config
   end
