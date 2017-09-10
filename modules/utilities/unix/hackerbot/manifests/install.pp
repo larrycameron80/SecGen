@@ -2,7 +2,8 @@ class hackerbot::install{
   $json_inputs = base64('decode', $::base64_inputs)
   $secgen_parameters = parsejson($json_inputs)
   $server_ip = $secgen_parameters['server_ip'][0]
-  $hackerbot_configs = $secgen_parameters['hackerbot_configs']
+  $hackerbot_xml_configs = $secgen_parameters['hackerbot_configs']['xml_config']
+  $hackerbot_lab_sheets = $secgen_parameters['hackerbot_configs']['html_lab_sheets']
 
   package { ['sshpass', 'ruby', 'rubygems']:
     ensure => 'installed',
@@ -22,7 +23,7 @@ class hackerbot::install{
     group => 'root',
   }
 
-  $hackerbot_configs.each |$counter, $config| {
+  $hackerbot_xml_configs.each |$counter, $config| {
     $num = $counter + 1
     $filename = "bot_$num.xml"
 
@@ -32,6 +33,16 @@ class hackerbot::install{
       mode   => '0600',
       owner => 'root',
       group => 'root',
+    }
+  }
+
+  $hackerbot_lab_sheets.each |$counter, $sheet| {
+    $num = $counter + 1
+    $filename = "lab_x_$num.html"
+
+    file { "/var/www/$filename":
+      ensure => present,
+      content => $sheet,
     }
   }
 

@@ -2,7 +2,7 @@
 require_relative '../../../../../../lib/objects/local_string_generator.rb'
 require 'erb'
 require 'fileutils'
-require 'nori'
+require 'redcarpet'
 require 'nokogiri'
 
 class HackerbotConfigGenerator < StringGenerator
@@ -74,8 +74,7 @@ class HackerbotConfigGenerator < StringGenerator
     end
     lab_sheet += hackerbot.xpath("tutorial_info/footer").first.content + "\n"
 
-    Print.debug lab_sheet
-    exit
+    lab_sheet
   end
 
   def generate
@@ -83,9 +82,12 @@ class HackerbotConfigGenerator < StringGenerator
     # Print.debug self.accounts.to_s
     template_out = ERB.new(File.read(TEMPLATE_PATH), 0, '<>-')
     xml_config = template_out.result(self.get_binding)
-    labsheet = generate_lab_sheet(xml_config)
+    lab_sheet_markdown = generate_lab_sheet(xml_config)
 
-    self.outputs << xml_config
+    redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(render_options = {}), extensions = {})
+    lab_sheet_html = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
+
+    self.outputs << {'xml_config' => xml_config, 'lab_sheet_html'=>lab_sheet_html}
   end
 
   # Returns binding for erb files (access to variables in this classes scope)

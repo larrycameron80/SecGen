@@ -6,7 +6,7 @@
 
 	<system>
 		<system_name>desktop</system_name>
-		<base platform="linux" distro="Debian 7.8"/>
+		<base distro="Debian 7.8" type="desktop" name="KDE"/>
 
 		<!--generate two accounts, YOU and someone else-->
 		<input into_datastore="accounts">
@@ -142,7 +142,7 @@ Diner's Club	3000 0000 0000 04</value>
 
 	<system>
 		<system_name>hackerbot_server</system_name>
-		<base distro="Kali"/>
+		<base distro="Kali" name="MSF"/>
 
 		<service type="ircd"/>
 
@@ -150,6 +150,12 @@ Diner's Club	3000 0000 0000 04</value>
 		<utility module_path=".*metasploit_framework"/>
 		<utility module_path=".*nmap"/>
 		<utility module_path=".*handy_cli_tools"/>
+
+		<input into_datastore="hackerbot">
+
+		</input>
+
+		<service type="httpd"/>
 
 		<!--TODO: fix hackerbot to have threads for each bot defined-->
 		<utility module_path=".*hackerbot">
