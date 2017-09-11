@@ -2,8 +2,8 @@ class hackerbot::install{
   $json_inputs = base64('decode', $::base64_inputs)
   $secgen_parameters = parsejson($json_inputs)
   $server_ip = $secgen_parameters['server_ip'][0]
-  $hackerbot_xml_configs = $secgen_parameters['hackerbot_configs'][0]['xml_config']
-  $hackerbot_lab_sheets = $secgen_parameters['hackerbot_configs'][0]['html_lab_sheets']
+  $hackerbot_xml_configs = parsejson($secgen_parameters['hackerbot_configs'])[0]['xml_config']
+  $hackerbot_lab_sheets = parsejson($secgen_parameters['hackerbot_configs'])[0]['html_lab_sheets']
 
   package { ['sshpass', 'ruby', 'rubygems']:
     ensure => 'installed',
