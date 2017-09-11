@@ -10,7 +10,8 @@ class HackerbotConfigGenerator < StringGenerator
   attr_accessor :flags
   attr_accessor :root_password
   LOCAL_DIR = File.expand_path('../../',__FILE__)
-  TEMPLATE_PATH = "#{LOCAL_DIR}/templates/integrity_lab.xml.erb"
+  TEMPLATES_PATH = "#{LOCAL_DIR}/templates/"
+  MAIN_TEMPLATE_PATH = "#{LOCAL_DIR}/templates/integrity_lab.xml.erb"
 
   def initialize
     super
@@ -80,14 +81,15 @@ class HackerbotConfigGenerator < StringGenerator
   def generate
 
     # Print.debug self.accounts.to_s
-    template_out = ERB.new(File.read(TEMPLATE_PATH), 0, '<>-')
+    template_out = ERB.new(File.read(MAIN_TEMPLATE_PATH), 0, '<>-')
     xml_config = template_out.result(self.get_binding)
     lab_sheet_markdown = generate_lab_sheet(xml_config)
 
     redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(render_options = {}), extensions = {})
     lab_sheet_html = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
 
-    self.outputs << {'xml_config' => xml_config, 'lab_sheet_html'=>lab_sheet_html}
+    json = {'xml_config' => xml_config.force_encoding('UTF-8'), 'lab_sheet_html'=>lab_sheet_html.force_encoding('UTF-8')}.to_json.force_encoding('UTF-8')
+    self.outputs << json.to_s
   end
 
   # Returns binding for erb files (access to variables in this classes scope)

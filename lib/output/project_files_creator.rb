@@ -133,7 +133,7 @@ class ProjectFilesCreator
       end
     rescue StandardError => e
       Print.err "Error writing file: #{e.message}"
-      exit
+      Print.err e.backtrace.inspect
     end
   end
 

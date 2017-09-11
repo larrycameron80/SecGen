@@ -27,4 +27,9 @@
   <software_name>unreal</software_name>
   <software_license>MIT</software_license>
 
+  <!--fails to build on Kali-->
+  <conflict>
+    <name>Kali.*</name>
+  </conflict>
+
 </service>

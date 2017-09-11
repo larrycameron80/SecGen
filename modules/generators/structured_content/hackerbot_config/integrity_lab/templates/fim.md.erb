@@ -1,0 +1,163 @@
+### Detecting changes to resources using hashes and file integrity checkers
+
+Another technique for detecting modifications to files is to use hashes
+of files in their known good state. Rather than storing and comparing
+complete copies, a one way hash function can be used to produce a fixed
+length hash (or 'digest'), which can be used for later comparisons.
+Hashes have security properties that enable this use:
+
+-   Each hash is unique to the input
+
+-   It is extremely difficult (practically impossible) to find another input that produces the same hash output
+
+-   Any change to the input (no matter how minor) changes the output hash dramatically
+
+We can store a hash and later recompute the hash, to determine whether
+the file has changed (if the hash is different), or it is exactly the
+same (if the hash is the same). If you have studied digital forensics,
+many of these concepts will be familiar to you, since hashes are also
+commonly used for verifying the integrity of digital evidence.
+
+Generate an MD5 hash of your backup password file, which you copied
+above:
+
+> md5sum /tmp/passwd\_backup
+
+Now calculate a hash of your current passwd file:
+
+> md5sum /etc/passwd
+
+If the generated hashes are different, you know the files do not have
+exactly the same content.
+
+Note that using hashes, there is no need to have the backup on-hand in
+order to check the integrity of files, you can just compare a newly
+generated hash to a previous one.
+
+Repeat the above two commands using shasum rather than md5sum. SHA1 and
+SHA2 are considered to be more secure than the 'cryptographically
+broken' MD5 algorithm. Although MD5 is still in use today, it is safer
+to use a stronger hash algorithm, since MD5 is not collision-resistant,
+meaning it is possible to find multiple files that result in the same
+hash. SHA1 is considered partially broken, so a new algorithm such as
+SHA2 is currently a good option. There are a number of related commands
+for generating hashes, named md5sum, shasum, sha224sum, sha256sum, and
+so on. These commands (as well as those in the next section) are readily
+available on most Unix systems, and are also available for Windows.
+
+#### File integrity checkers
+
+A file integrity checker is a program that compares files to previously
+generated hashes. A number of these kinds of tools exist, and these can
+be considered a form of host-based intrusion detection system (HIDS),
+particularly if the checking happens automatically. One of the most well
+known integrity checkers is Tripwire, which was previously released open
+source; although, new versions are closed source and maintained by
+Tripwire, Inc, with a more holistic enterprise ICT change management
+focus. There are other tools similar to Tripwire, such as AIDE (Advanced
+Intrusion Detection Environment), and OSSEC (Open Source Host-based
+Intrusion Detection System).
+
+The above md5sum, shasum (and so on) programs can also be used to check
+a list of file hashes.
+
+Create an empty file, where *your-name*, is your actual name:
+
+> touch *your-name*
+
+Run the following to generate a file containing hashes of files we can
+later check against:
+
+> shasum *your-name* &gt;&gt; /tmp/hash.sha
+>
+> shasum /etc/passwd &gt;&gt; /tmp/hash.sha
+>
+> sudo shasum /etc/shadow &gt;&gt; /tmp/hash.sha
+>
+> shasum /bin/bash &gt;&gt; /tmp/hash.sha
+>
+> shasum /bin/ls &gt;&gt; /tmp/hash.sha
+
+Look at the contents of our new hashes file (Q to quit when done):
+
+> less /tmp/hash.sha
+
+Now use your new hash list to check that nothing has changed since we
+generated the hashes:
+
+> shasum -c /tmp/hash.sha
+
+Why does shasum fail to check the integrity of the shadow file?
+
+Make a change to our empty '*your-name*' file:
+
+> echo "hello" &gt; *your-name*
+
+Check whether anything has changed since we generated hashes:
+
+> shasum -c /tmp/hash.sha
+
+You should see a nice explanation of the files that have changed since
+generating the hashes.
+
+#### Scripted integrity checking
+
+The above can also be accomplished via a simple script (in this case a
+Perl script):
+	
+	#!/usr/bin/perl
+	
+	# Copyleft 2012, Z. Cliffe Schreuders
+	
+	# Licenced under the terms of the GPLv3
+	
+	use warnings;
+	
+	use strict;
+	
+	my %files\_hashes = (
+	
+		"/bin/ls"=&gt;"9304c5cba4e2a7dc25c2d56a6da6522e929eb848",
+	
+		"/bin/bash"=&gt;"54d0d9610e49a654843497c19f6211b3ae41b7c0",
+	
+		"/etc/passwd"=&gt;"69773dcef97bca8f689c5bc00e9335f7dd3d9e08"
+	
+	);
+	
+	foreach my \$file\_entry (keys %files\_hashes) {
+	
+	my \$hash = \`sha1sum \$file\_entry|awk '{print \\\$1}'|head -n1\`;
+	
+	chomp(\$hash);
+	
+	if(\$hash ne \$files\_hashes{\$file\_entry}){
+	
+	warn "FILE CHANGED: \$file\_entry (hash was \$hash, expected
+	\$files\_hashes{\$file\_entry})\\n";
+	
+	} else {
+	
+	print "File unmodified: \$file\_entry (hash was \$hash, as
+	expected)\\n";
+	
+	}
+	
+	}
+
+This script simply iterates over a list of file paths with SHA1 hashes
+(stored in an associative array), and runs sha1sum for each one to check
+whether the files are still the same.
+
+Save the script as checker.pl (Help: you may wish to install the default
+KDE GUI text editor Kate, if it is not already installed under the
+Utlities menu. You should be able to copy the script and paste it into
+Kate to save it as checker.pl. Kate can be installed using the following
+command: 'sudo zypper install kate')
+
+Then run the script with:
+
+> perl checker.pl
+
+Are the files reported as unmodified, or have they changed? Why might
+they be different to when I wrote the script?
