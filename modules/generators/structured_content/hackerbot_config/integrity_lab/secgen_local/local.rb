@@ -88,7 +88,7 @@ class HackerbotConfigGenerator < StringGenerator
     redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(render_options = {}), extensions = {})
     lab_sheet_html = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
 
-    json = {'xml_config' => xml_config.force_encoding('UTF-8'), 'lab_sheet_html'=>lab_sheet_html.force_encoding('UTF-8')}.to_json.force_encoding('UTF-8')
+    json = {'xml_config' => xml_config.force_encoding('UTF-8'), 'html_lab_sheet'=>lab_sheet_html.force_encoding('UTF-8')}.to_json.force_encoding('UTF-8')
     self.outputs << json.to_s
   end
 

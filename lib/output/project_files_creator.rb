@@ -32,11 +32,26 @@ class ProjectFilesCreator
 
 # Generate all relevant files for the project
   def write_files
+    # when writing to a project that already contains a project, move everything out the way,
+    # and keep the Vagrant config, so that existing VMs can be re-provisioned/updated
+    if File.exists? "#{@out_dir}/Vagrantfile" or File.exists? "#{@out_dir}/puppet"
+      dest_dir = "#{@out_dir}/MOVED_#{Time.new.strftime("%Y%m%d_%H%M")}"
+      Print.warn "Project already built to this directory -- moving last build to: #{dest_dir}"
+      Dir.glob( "#{@out_dir}/**/*" ).select { |f| File.file?( f ) }.each do |f|
+        dest = "#{dest_dir}/#{f}"
+        FileUtils.mkdir_p( File.dirname( dest ) )
+        if f =~ /\.vagrant/
+          FileUtils.cp( f, dest )
+        else
+          FileUtils.mv( f, dest )
+        end
+      end
+    end
+
     FileUtils.mkpath "#{@out_dir}" unless File.exists?("#{@out_dir}")
     FileUtils.mkpath "#{@out_dir}/puppet/" unless File.exists?("#{@out_dir}/puppet/")
     FileUtils.mkpath "#{@out_dir}/environments/production/" unless File.exists?("#{@out_dir}/environments/production/")
 
-    threads = []
     # for each system, create a puppet modules directory using librarian-puppet
     @systems.each do |system|
       @currently_processing_system = system # for template access
@@ -106,11 +121,11 @@ class ProjectFilesCreator
     end
 
     # Create the marker xml file
-    x2file = "#{@out_dir}/marker.xml"
+    x2file = "#{@out_dir}/flag_hints.xml"
 
     xml_marker_generator = XmlMarkerGenerator.new(@systems, @scenario, @time)
     xml = xml_marker_generator.output
-    Print.std "Creating marker file: #{x2file}"
+    Print.std "Creating flags and hints file: #{x2file}"
     begin
       File.open(x2file, 'w+') do |file|
         file.write(xml)
@@ -119,6 +134,7 @@ class ProjectFilesCreator
       Print.err "Error writing file: #{e.message}"
       exit
     end
+    Print.std "VM(s) can be built using 'vagrant up' in #{@out_dir}"
 
   end
 

@@ -20,7 +20,12 @@ def usage
               (output will default to #{default_project_dir})
 
    --help, -h: Shows this usage information
-   --gui-output', '-g' gui output
+
+   --system, -y [system_name]: only build this system_name from the scenario
+   --reload, -r: combine with --project to reload and re-provision previously generated VM
+              (handy for quicker testing of modules)
+
+   --gui-output, -g gui output
    --nopae: disable PAE support
    --hwvirtex: enable HW virtex support
    --vtxvpid: enable VTX support
@@ -29,9 +34,9 @@ def usage
    COMMANDS:
    run, r: Builds project and then builds the VMs
    build-project, p: Builds project (vagrant and puppet config), but does not build VMs
-   build-vms [/project/dir], v [project #]: Builds VMs from a previously generated project
+   build-vms, v: Builds VMs from a previously generated project
               (use in combination with --project [dir])
-   create-forensic-image [/project/dir], v [project #]: Builds forensic images from a previously generated project
+   create-forensic-image: Builds forensic images from a previously generated project
               (can be used in combination with --project [dir])
    list-scenarios: Lists all scenarios that can be used with the --scenario option
    list-projects: Lists all projects that can be used with the --project option
@@ -102,9 +107,17 @@ end
 
 # Builds the vm via the vagrant file in the project dir
 # @param project_dir
-def build_vms(project_dir)
+def build_vms(project_dir, options)
   Print.info "Building project: #{project_dir}"
-  if GemExec.exe('vagrant', project_dir, 'up')
+  system = ''
+  command = 'up'
+  if options.has_key? :system
+    system = options[:system]
+  end
+  if options.has_key? :reload
+    command = '--provision reload'
+  end
+  if GemExec.exe('vagrant', project_dir, "#{command} #{system}")
     Print.info 'VMs created.'
   else
     Print.err 'Error creating VMs, Exiting SecGen.'
@@ -174,7 +187,7 @@ end
 # Runs methods to run and configure a new vm from the configuration file
 def run(scenario, project_dir, options)
   build_config(scenario, project_dir, options)
-  build_vms(project_dir)
+  build_vms(project_dir, options)
 end
 
 def default_project_dir
@@ -216,6 +229,8 @@ opts = GetoptLong.new(
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--project', '-p', GetoptLong::REQUIRED_ARGUMENT ],
   [ '--scenario', '-s', GetoptLong::REQUIRED_ARGUMENT ],
+  [ '--system', '-y', GetoptLong::REQUIRED_ARGUMENT],
+  [ '--reload', '-r', GetoptLong::NO_ARGUMENT],
   [ '--gui-output', '-g', GetoptLong::NO_ARGUMENT],
   [ '--nopae', GetoptLong::NO_ARGUMENT],
   [ '--hwvirtex', GetoptLong::NO_ARGUMENT],
@@ -243,6 +258,12 @@ opts.each do |opt, arg|
       project_dir = arg;
 
     # Additional options
+    when '--system'
+      Print.info "VM control (Vagrant) commands will only apply to system #{arg} (must match a system defined in the scenario)"
+      options[:system] = arg
+    when '--reload'
+      Print.info "Will reload and re-provision the VMs"
+      options[:reload] = true
     when '--gui-output'
       Print.info "Gui output set (virtual machines will be spawned)"
       options[:gui_output] = true

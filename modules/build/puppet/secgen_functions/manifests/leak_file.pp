@@ -1,9 +1,9 @@
 define secgen_functions::leak_file($leaked_filename, $storage_directory, $strings_to_leak, $owner = 'root', $group = 'root', $mode = '0777', $leaked_from = '' ) {
   if ($leaked_filename != ''){
     $path_to_leak = "$storage_directory/$leaked_filename"
-    alert("path_to_leak = $path_to_leak")
-    alert("storage_directory = $storage_directory")
-    alert("strings_to_leak = $strings_to_leak")
+    # notice("path_to_leak = $path_to_leak")
+    # notice("storage_directory = $storage_directory")
+    # notice("strings_to_leak = $strings_to_leak")
 
     # create the directory tree, incase the file name has extra layers of directories
     exec { "$leaked_from-$path_to_leak":
