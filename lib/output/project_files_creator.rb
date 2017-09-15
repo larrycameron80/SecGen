@@ -144,7 +144,7 @@ class ProjectFilesCreator
     template_out = ERB.new(File.read(template), 0, '<>-')
 
     begin
-      File.open(filename, 'w+') do |file|
+      File.open(filename, 'wb+') do |file|
         file.write(template_out.result(self.get_binding))
       end
     rescue StandardError => e

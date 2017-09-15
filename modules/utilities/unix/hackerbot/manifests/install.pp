@@ -2,6 +2,7 @@ class hackerbot::install{
   $json_inputs = base64('decode', $::base64_inputs)
   $secgen_parameters = parsejson($json_inputs)
   $server_ip = $secgen_parameters['server_ip'][0]
+  $port = $secgen_parameters['port'][0]
 
   $hackerbot_xml_configs = []
   $hackerbot_lab_sheets = []
@@ -13,6 +14,24 @@ class hackerbot::install{
     mode   => '0600',
     owner => 'root',
     group => 'root',
+  }->
+
+  file { '/var/www/labs':
+    ensure => directory,
+    recurse => true,
+    source => 'puppet:///modules/hackerbot/www',
+    mode   => '0600',
+    owner => 'root',
+    group => 'root',
+  }->
+
+  class { '::apache':
+    default_vhost => false,
+    # overwrite_ports => false,
+  }
+  apache::vhost { 'vhost.labs.com':
+    port    => $port,
+    docroot => '/var/www/labs',
   }->
 
   file { "/opt/hackerbot/hackerbot.rb":
@@ -35,13 +54,9 @@ class hackerbot::install{
       group => 'root',
     }
 
-    file { '/var/www/labs':
-      ensure => 'directory',
-    }
-
     $htmlfilename = "lab_r$counter.html"
 
-    file { "/var/www/$htmlfilename":
+    file { "/var/www/html/$htmlfilename":
       ensure => present,
       content => $parsed_pair['html_lab_sheet'],
     }

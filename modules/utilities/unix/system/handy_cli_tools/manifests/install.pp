@@ -1,5 +1,5 @@
 class handy_cli_tools::install{
-  package { ['vim.tiny','rsync']:
+  package { ['vim.tiny', 'vim', 'rsync']:
     ensure => 'installed',
   }
 }

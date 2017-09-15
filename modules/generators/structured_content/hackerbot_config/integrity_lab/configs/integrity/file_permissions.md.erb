@@ -1,0 +1,24 @@
+### Protecting integrity with file permissions
+#### Getting to know file permissions
+Open a terminal console (such as Konsole from KDEMenu ? Applications ? System ? Konsole).
+
+Start by creating a file with some content. Run:
+
+```bash
+sudo bash -c 'cat > /var/log/mylogfile'
+```
+> (Type some content, then press Ctrl-D to finish and return to the
+prompt.)
+
+Look at the details of the file:
+
+```bash
+ls -la /var/log/mylogfile
+```
+``
+ -rw-r--r-- 1 root root 20 Feb 7 17:38 /var/log/mylogfile
+``
+
+As we can see above, the file is owned by root, who has read-write access.
+
+Exploring Unix file permissions further is outside the scope of this lab, but will be covered elsewhere.

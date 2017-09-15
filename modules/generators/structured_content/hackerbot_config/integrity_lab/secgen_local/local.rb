@@ -9,9 +9,12 @@ class HackerbotConfigGenerator < StringGenerator
   attr_accessor :accounts
   attr_accessor :flags
   attr_accessor :root_password
+  attr_accessor :html_out
+  attr_accessor :title
   LOCAL_DIR = File.expand_path('../../',__FILE__)
   TEMPLATES_PATH = "#{LOCAL_DIR}/templates/"
-  MAIN_TEMPLATE_PATH = "#{LOCAL_DIR}/templates/integrity_lab.xml.erb"
+  CONFIG_TEMPLATE_PATH = "#{LOCAL_DIR}/templates/integrity_lab.xml.erb"
+  HTML_TEMPLATE_PATH = "#{LOCAL_DIR}/templates/labsheet.html.erb"
 
   def initialize
     super
@@ -19,6 +22,8 @@ class HackerbotConfigGenerator < StringGenerator
     self.accounts = []
     self.flags = []
     self.root_password = ''
+    self.html_rendered = ''
+    self.title = 'Integrity management'
   end
 
   def get_options_array
@@ -81,14 +86,17 @@ class HackerbotConfigGenerator < StringGenerator
   def generate
 
     # Print.debug self.accounts.to_s
-    template_out = ERB.new(File.read(MAIN_TEMPLATE_PATH), 0, '<>-')
-    xml_config = template_out.result(self.get_binding)
+    xml_template_out = ERB.new(File.read(CONFIG_TEMPLATE_PATH), 0, '<>-')
+    xml_config = xml_template_out.result(self.get_binding)
+
     lab_sheet_markdown = generate_lab_sheet(xml_config)
 
-    redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(render_options = {}), extensions = {})
-    lab_sheet_html = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
+    redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(prettify:true, hard_wrap: true, with_toc_data: true), footnotes: true, fenced_code_blocks: true, no_intra_emphasis: true)
+    self.html_rendered = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
+    html_template_out = ERB.new(File.read(HTML_TEMPLATE_PATH), 0, '<>-')
+    html_out = html_template_out.result(self.get_binding)
 
-    json = {'xml_config' => xml_config.force_encoding('UTF-8'), 'html_lab_sheet'=>lab_sheet_html.force_encoding('UTF-8')}.to_json.force_encoding('UTF-8')
+    json = {'xml_config' => xml_config.force_encoding('UTF-8'), 'html_lab_sheet' => html_out.force_encoding('UTF-8')}.to_json.force_encoding('UTF-8')
     self.outputs << json.to_s
   end
 
