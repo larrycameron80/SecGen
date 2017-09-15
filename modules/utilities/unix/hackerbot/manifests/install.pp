@@ -23,16 +23,7 @@ class hackerbot::install{
     mode   => '0600',
     owner => 'root',
     group => 'root',
-  }->
-
-  class { '::apache':
-    default_vhost => false,
-    # overwrite_ports => false,
   }
-  apache::vhost { 'vhost.labs.com':
-    port    => $port,
-    docroot => '/var/www/labs',
-  }->
 
   file { "/opt/hackerbot/hackerbot.rb":
     ensure  => file,
@@ -61,6 +52,15 @@ class hackerbot::install{
       content => $parsed_pair['html_lab_sheet'],
     }
 
+  }
+
+  class { '::apache':
+    default_vhost => false,
+    # overwrite_ports => false,
+  }
+  apache::vhost { 'vhost.labs.com':
+    port    => $port,
+    docroot => '/var/www/labs',
   }
 
   package { ['nori', 'cinch', 'programr']:
