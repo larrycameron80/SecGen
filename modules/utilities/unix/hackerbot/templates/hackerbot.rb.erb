@@ -355,8 +355,10 @@ end
 
 def start_bots(bots)
   bots.each do |bot_name, bot|
-    Print.std "Starting bot: #{bot_name}\n"
-    bot['bot'].start
+    Thread.new {
+      Print.std "Starting bot: #{bot_name}\n"
+      bot['bot'].start
+    }
   end
 end
 
