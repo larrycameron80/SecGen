@@ -92,7 +92,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
          File.write("#{@out_dir}/#{dir}/#{rand}", b64_json_inputs)
       -%>
 <%=   module_name%>.facter = {
-        "base64_inputs" => '<%= b64_json_inputs %>',
+#        "base64_inputs" => '<%= b64_json_inputs %>',
         "base64_inputs_file" => '<%= rand %>',
       }
 <%    end -%>

@@ -92,7 +92,7 @@ class HackerbotConfigGenerator < StringGenerator
     lab_sheet_markdown = generate_lab_sheet(xml_config)
 
     # TODO REMOVE TRUNCATION!
-    lab_sheet_markdown = lab_sheet_markdown.to_s[0..3000]
+    # lab_sheet_markdown = lab_sheet_markdown.to_s[0..3000]
 
     redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(prettify:true, hard_wrap: true, with_toc_data: true), footnotes: true, fenced_code_blocks: true, no_intra_emphasis: true)
     self.html_rendered = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')

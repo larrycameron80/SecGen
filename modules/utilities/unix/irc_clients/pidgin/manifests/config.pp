@@ -1,6 +1,5 @@
 class pidgin::config {
-  $json_inputs = base64('decode', $::base64_inputs)
-  $secgen_params = parsejson($json_inputs)
+  $secgen_params = secgen_functions::get_parameters($::base64_inputs_file)
   $accounts = $secgen_params['accounts']
   $autostart = str2bool($secgen_params['autostart'][0])
   $ip = $secgen_params['server_ip'][0]
