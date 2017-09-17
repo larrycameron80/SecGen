@@ -3,6 +3,7 @@
 On Unix, a filesystem is mounted to a particular point in the directory structure; for example, a USB thumb drive may be mounted to /media/myUSB/. Some filesystems will automatically mount read-only; for example, if you insert a CD-ROM, since those disks are physically read-only. It is possible to optionally mount almost any filesystem, such as a USB or even a directory, in read-only mode, which will make it practically impossible to write changes to it (without remounting or accessing the drive/directory in other ways, which normally only root can do).
 
 In a command prompt, run:
+
 ```bash
 mount
 ```
@@ -11,22 +12,27 @@ mount
 Ordinary users can only read the /etc directory but the superuser root who owns the /etc directory can read and write to it. In the following example, you are going to mount the /etc directory to a mount point (another directory within the filesystem) and the contents of the /etc directory will be accessible via the mount point.
 
 List the contents of the /etc directory so you are familiar with its contents:
+
 ```bash
 ls /etc
 ```
 Create a new directory to be the mount point:
+
 ```bash
 mkdir /home/<%= $main_user %>/test
 ```
 Mount the /etc directory to the new mount point:
+
 ```bash
 sudo mount -o bind /etc /home/<%= $main_user %>/test
 ```
 Make sure the /etc directory is accessible via the test directory mount point:
+
 ```bash
 ls /home/<%= $main_user %>/test
 ```
 Ordinary users can only read but the superuser root can still write to the directory. Test this by creating a new file as the superuser root in the /home/student/test directory:
+
 ```bash
 sudo touch /home/<%= $main_user %>/test/file1
 ```
@@ -42,12 +48,14 @@ We can use this techniques to make filesystems and directories read-only. In the
 sudo mount -o remount,ro,bind /etc /home/<%= $main_user %>/test
 ```
 Test this by trying creating a new file as the superuser root in the /home/<%= $main_user %>/test directory:
+
 ```bash
 sudo touch /home/<%= $main_user %>/test/file2
 ```
 This should prevent changes being accidently being made to important configuration files in the /etc directory.
 
 Remount the the /etc directory as read-only to itself:
+
 ```bash
 sudo mount -o remount,ro,bind /etc /etc
 ```

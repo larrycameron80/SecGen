@@ -5,6 +5,7 @@ Unix systems (such as Linux or FreeBSD) include file attributes that, amongst ot
 [^1]: Setting a file to immutable (and therefore impossible to simply delete) can be an effective prank against the uninitiated in Unix ways.
 
 Run:
+
 ```bash
 lsattr /var/log/mylogfile
 ```
@@ -20,15 +21,18 @@ man chattr
 > (Press q to leave the manual page)
 
 Set the ?i? flag using the chattr command:
+
 ```bash
 sudo chattr +i /var/log/mylogfile
 ```
 
 Now try to delete the file and see what happens:
+
 ```bash
 rm /var/log/mylogfile
 ```
 Denied! Opps, that?s right, root owns the file (since you created it with sudo)! Use root to try to delete the file:
+
 ```bash
 sudo rm /var/log/mylogfile
 ```
@@ -40,6 +44,7 @@ Use some commands to remove the ?i? flag (hint: '-i', instead of '+i').
 Now run a command to set the ?a? flag on /var/log/mylogfile.
 
 If you have done so correctly, attempting to overwrite the file with a test message should fail:
+
 ```bash
 sudo bash -c 'echo "test message" > /var/log/mylogfile'
 ```

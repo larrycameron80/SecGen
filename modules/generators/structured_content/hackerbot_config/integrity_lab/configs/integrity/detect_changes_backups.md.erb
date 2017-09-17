@@ -35,6 +35,7 @@ vi /etc/passwd
 > :wq
 
 Look at the changes in your accounts made on your computer, and try to spot the new user account:
+
 ```bash
 less /etc/passwd
 ```
@@ -44,6 +45,7 @@ It?s not as easy as it sounds, especially if your system has lots of user accoun
 
 Since you have a backup of your passwd file, you can compare the backup with the current passwd file to determine it has been modified. One such tool for determining changes is diff. Diff is a standard Unix command.
 Run:
+
 ```bash
 diff -q /tmp/passwd_backup /etc/passwd
 ```
