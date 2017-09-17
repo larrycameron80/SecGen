@@ -10,6 +10,7 @@ class HackerbotConfigGenerator < StringGenerator
   attr_accessor :flags
   attr_accessor :root_password
   attr_accessor :html_rendered
+  attr_accessor :html_TOC_rendered
   attr_accessor :title
   LOCAL_DIR = File.expand_path('../../',__FILE__)
   TEMPLATES_PATH = "#{LOCAL_DIR}/templates/"
@@ -23,6 +24,7 @@ class HackerbotConfigGenerator < StringGenerator
     self.flags = []
     self.root_password = ''
     self.html_rendered = ''
+    self.html_TOC_rendered = ''
     self.title = 'Integrity management'
   end
 
@@ -41,6 +43,9 @@ class HackerbotConfigGenerator < StringGenerator
         self.accounts << arg;
       when '--flags'
         self.flags << arg;
+      # when '--topic'
+      #   # check topic exists
+      #   self.topic << arg;
     end
   end
 
@@ -90,9 +95,6 @@ class HackerbotConfigGenerator < StringGenerator
     xml_config = xml_template_out.result(self.get_binding)
 
     lab_sheet_markdown = generate_lab_sheet(xml_config)
-
-    # TODO REMOVE TRUNCATION!
-    # lab_sheet_markdown = lab_sheet_markdown.to_s[0..3000]
 
     redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(prettify:true, hard_wrap: true, with_toc_data: true), footnotes: true, fenced_code_blocks: true, no_intra_emphasis: true)
     self.html_rendered = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')

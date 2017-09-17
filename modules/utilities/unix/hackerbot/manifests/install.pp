@@ -11,7 +11,7 @@ class hackerbot::install{
     ensure => directory,
     recurse => true,
     source => 'puppet:///modules/hackerbot/opt_hackerbot',
-    mode   => '0600',
+    mode   => '0700',
     owner => 'root',
     group => 'root',
   }
@@ -20,7 +20,7 @@ class hackerbot::install{
     ensure => directory,
     recurse => true,
     source => 'puppet:///modules/hackerbot/www',
-    mode   => '0600',
+    mode   => '0666',
     owner => 'root',
     group => 'root',
   }

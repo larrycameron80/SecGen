@@ -5,6 +5,7 @@ require './print.rb'
 require 'open3'
 require 'programr'
 require 'getoptlong'
+require 'thwait'
 
 def read_bots (irc_server_ip_address)
   bots = {}
@@ -354,12 +355,14 @@ def read_bots (irc_server_ip_address)
 end
 
 def start_bots(bots)
+  threads = []
   bots.each do |bot_name, bot|
-    Thread.new {
+    threads << Thread.new {
       Print.std "Starting bot: #{bot_name}\n"
       bot['bot'].start
     }
   end
+  ThreadsWait.all_waits(threads)
 end
 
 def usage
@@ -372,7 +375,7 @@ Print.std '~'*47
 Print.std ' '*19 + 'Hackerbot'
 Print.std '~'*47
 
-irc_server_ip_address = '<%= @server_ip %>'
+irc_server_ip_address = 'localhost'
 
 # Get command line arguments
 opts = GetoptLong.new(

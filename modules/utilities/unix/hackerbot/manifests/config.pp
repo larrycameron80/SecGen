@@ -2,7 +2,6 @@ class hackerbot::config{
   require hackerbot::install
 
   $secgen_parameters = secgen_functions::get_parameters($::base64_inputs_file)
-  $server_ip = $secgen_parameters['server_ip'][0]
   $port = $secgen_parameters['port'][0]
 
   $hackerbot_xml_configs = []
@@ -31,18 +30,12 @@ class hackerbot::config{
 
   }
 
-  file { "/opt/hackerbot/hackerbot.rb":
-    ensure  => file,
-    content  => template('hackerbot/hackerbot.rb.erb'),
-    require => File['/opt/hackerbot'],
-  }
-
   class { '::apache':
     default_vhost => false,
     # overwrite_ports => false,
   }
   apache::vhost { 'vhost.labs.com':
-    port    => $port,
+    port    => '$port',
     docroot => '/var/www/labs',
   }
 
