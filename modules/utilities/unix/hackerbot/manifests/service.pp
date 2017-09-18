@@ -5,6 +5,10 @@ class hackerbot::service{
     ensure => 'link',
     target => '/opt/hackerbot/hackerbot.service',
   }->
+  service { 'NetworkManager':
+    ensure   => stopped,
+    enable   => false,
+  }->
   service { 'hackerbot':
     ensure   => running,
     enable   => true,

@@ -84,15 +84,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       if selected_module.received_inputs != {} -%>
       <% json_inputs = JSON.generate(selected_module.received_inputs)
          b64_json_inputs = Base64.strict_encode64(json_inputs)
-         # save the inputs in a random file in the project out directory secgen_functions module
+         # save the inputs in a randomly named file in the
+         #   project out directory of the secgen_functions module
          rand = SecureRandom.hex().to_s
-         dir = "puppet/#{system.name}/modules/secgen_functions/files/json_inputs"
+         dir = "#{@out_dir}/puppet/#{system.name}/modules/secgen_functions/files/json_inputs"
          FileUtils.mkdir_p(dir) unless File.exists?(dir)
-         Print.debug "#{@out_dir}/#{dir}/#{rand}"
-         File.write("#{@out_dir}/#{dir}/#{rand}", b64_json_inputs)
+         Print.verbose "Writing #{selected_module.module_path_name} input to: #{dir}/#{rand}"
+         File.write("#{dir}/#{rand}", b64_json_inputs)
       -%>
 <%=   module_name%>.facter = {
-#        "base64_inputs" => '<%= b64_json_inputs %>',
         "base64_inputs_file" => '<%= rand %>',
       }
 <%    end -%>

@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/robertjwhitney/programr.git
+  revision: f6e821f494983f6fdcca62e31e458a1e85f25400
+  specs:
+    programr (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -36,7 +42,6 @@ GEM
       pkg-config (~> 1.1.7)
     nori (2.6.0)
     pkg-config (1.1.7)
-    programr (0.0.1)
     puppet (4.5.1)
       CFPropertyList (~> 2.2.6)
       facter (> 2.0, < 4)
@@ -77,7 +82,7 @@ DEPENDENCIES
   minitest
   nokogiri
   nori
-  programr
+  programr!
   puppet
   rake
   rdoc

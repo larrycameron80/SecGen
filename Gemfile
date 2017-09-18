@@ -14,7 +14,7 @@ gem 'sshkey'
 gem 'zipruby'
 gem 'cinch'
 gem 'nori'
-gem 'programr'
+gem 'programr', :git => "git://github.com/robertjwhitney/programr.git"
 
 #development only gems go here
 group :test, :development do

@@ -1,24 +1,89 @@
 ### Protecting integrity with file permissions
 #### Getting to know file permissions
-Open a terminal console (such as Konsole from KDEMenu ? Applications ? System ? Konsole).
 
-Start by creating a file with some content. Run:
+File permissions enable users to control the access that other users have to their files.
+
+We will cover the topic in depth elsewhere. This just provides an introduction to Unix file permissions.
+
+Open a terminal console (such as "Konsole" from KDEMenu / Applications / System / Konsole).
+
+Start by creating a file with some content.
+
+==Run:==
 
 ```bash
-sudo bash -c 'cat > /var/log/mylogfile'
+cat > /tmp/example
+```
+> (Type some content, then press Ctrl-D to finish and return to the
+prompt.)
+> The output is sent to the file /tmp/example
+
+You can read the content:
+
+```bash
+cat /tmp/example
+```
+
+Or replace the content:
+
+```bash
+cat > /tmp/example
 ```
 > (Type some content, then press Ctrl-D to finish and return to the
 prompt.)
 
-Look at the details of the file:
+You can view the file permissions with:
 
 ```bash
-ls -la /var/log/mylogfile
+ls -la /tmp/example
 ```
 ``
- -rw-r--r-- 1 root root 20 Feb 7 17:38 /var/log/mylogfile
+ -rw-r--r-- 1 user user 20 Feb 7 17:38 /tmp/example
 ``
 
-As we can see above, the file is owned by root, who has read-write access.
+This shows that the file is owned by *user*, and that the user has read-write access ("rw-"), others on the system have read access ("r--").
+
+By default new files can only be edited by the owner of the file (more on file permissions and umask another time). However, other users can likely read your files.
+
+You can remove the ability of **anyone** changing the content. ==Run:==
+
+```bash
+chmod -w /tmp/example
+```
+> -w means "remove write access (for everyone)"
+
+Try changing the content. ==Run:==
+
+```bash
+cat > /tmp/example
+```
+
+You can't.
+
+You can remove the ability of **everyone else** changing the content. ==Run:==
+
+```bash
+chmod u+w,o-rw /tmp/example
+```
+> u+w: user who owns the file, add write access
+> o-rw: others, remove read and write access
+
+
+You can view the file permissions with:
+
+```bash
+ls -la /tmp/example
+```
+``
+ -rw-------- 1 user user 20 Feb 7 17:38 /tmp/example
+``
+
+Note that **the root user can access any files**, regardless of file permissions.
+
+```bash
+chmod -w /tmp/example
+sudo cat /tmp/example
+```
+> enter your password, and note that as root you can access the file regardless of permissions
 
 Exploring Unix file permissions further is outside the scope of this lab, but will be covered elsewhere.

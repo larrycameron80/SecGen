@@ -30,5 +30,8 @@ class hackerbot::install{
     provider => 'gem',
   }
 
+  package { ['sshpass']:
+    ensure   => 'installed',
+  }
 
 }

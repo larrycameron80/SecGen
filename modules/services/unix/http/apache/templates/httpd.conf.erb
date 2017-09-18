@@ -24,7 +24,7 @@ User <%= @user %>
 Group <%= @group %>
 
 AccessFileName .htaccess
-<FilesMatch "^\.ht">
+<FilesMatch <%= "\"^\.ht\"" %>>
 <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
     Require all denied
 <%- else -%>
@@ -122,7 +122,7 @@ Include "<%= @vhost_load_dir %>/<%= @vhost_include_pattern %>"
 # /usr/share/apache2/error on debian
 Alias /error/ "<%= @error_documents_path %>/"
 
-<Directory "<%= @error_documents_path %>">
+<Directory <%= "\"#{@error_documents_path}\"" %>>
   AllowOverride None
   Options IncludesNoExec
   AddOutputFilter Includes html

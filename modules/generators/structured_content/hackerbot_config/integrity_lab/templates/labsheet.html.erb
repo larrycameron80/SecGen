@@ -13,10 +13,65 @@
 		margin: 0 auto;
 		padding: 45px;
 	}
+	article {
+		float: right;
+		width: calc(100% - 300px);
+	}
+	.toc {
+		float: left;
+		font-size: smaller;
+		color: #1a1d22;
+		width: 300px;
+		position: fixed;
+		height: calc(100% - 55px);
+		overflow: scroll;
+		font-family: sans-serif;
+		margin-top: 50px;
+	}
+	.toc ul {
+		list-style-type: none;
+		padding: 0;
+		margin-left: 1em;
+	}
+	.toc li { /* Space between menu items*/
+		margin: 1em 0;
+	}
+	.toc a {
+		color: #1a1d22;
+		text-decoration: none;
+	}
+	.toc a:hover {
+		color: #6c036d;
+		text-decoration: none;
+	}
+	.toc a:visited {
+		color: #1a1d22;
+		text-decoration: none;
+	}
+	.markdown-body pre, .markdown-body code {
+		background-color: #220113;
+		color: whitesmoke;
+	}
+	mark {
+		background-color: #ccc5da;
+		color: black;
+	}
 	@media (max-width: 767px) {
 		.markdown-body {
 			padding: 15px;
+			min-width: 200px;
+			max-width: 980px;
+    }
+		.toc {
+			float: none;
+			width: 100%;
+      position: relative;
 		}
+		article {
+			float: right;
+			width: calc(100% - 300px);
+		}
+
 	}
 </style>
 <div class="toc">

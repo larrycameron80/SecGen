@@ -35,7 +35,7 @@ class hackerbot::config{
     # overwrite_ports => false,
   }
   apache::vhost { 'vhost.labs.com':
-    port    => '$port',
+    port    => "$port",
     docroot => '/var/www/labs',
   }
 

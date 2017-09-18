@@ -77,11 +77,11 @@ class HackerbotConfigGenerator < StringGenerator
       lab_sheet += "#### #{name} Attack ##{index + 1}\n"
       lab_sheet += "Use what you have learned to complete the bot's challenge. You can skip the bot to here, by saying '**goto #{index + 1}**'\n\n"
       lab_sheet += "> #{name}: \"#{attack.xpath('prompt').first.content}\" \n\n"
-      lab_sheet += "Do any necessary preparation, then when you are ready for the bot to complete the action/attack, say '**ready**'\n\n"
+      lab_sheet += "Do any necessary preparation, then when you are ready for the bot to complete the action/attack, ==say '**ready**'==\n\n"
       if attack.xpath("quiz").size > 0
-        lab_sheet += "There is a quiz to complete. Once Hackerbot asks you the question you can '**answer YOURANSWER**'\n\n"
+        lab_sheet += "There is a quiz to complete. Once Hackerbot asks you the question you can =='**answer YOURANSWER**'==\n\n"
       end
-
+      lab_sheet += "Don't forget to ==save and submit any flags!==\n\n"
     end
     lab_sheet += hackerbot.xpath("tutorial_info/footer").first.content + "\n"
 
@@ -96,7 +96,7 @@ class HackerbotConfigGenerator < StringGenerator
 
     lab_sheet_markdown = generate_lab_sheet(xml_config)
 
-    redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(prettify:true, hard_wrap: true, with_toc_data: true), footnotes: true, fenced_code_blocks: true, no_intra_emphasis: true, autolink: true, highlight: true)
+    redcarpet = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new(prettify:true, hard_wrap: true, with_toc_data: true), footnotes: true, fenced_code_blocks: true, no_intra_emphasis: true, autolink: true, highlight: true, lax_spacing: true)
     self.html_rendered = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
     redcarpet_toc = Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new())
     self.html_TOC_rendered = redcarpet_toc.render(lab_sheet_markdown).force_encoding('UTF-8')
