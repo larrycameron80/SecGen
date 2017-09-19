@@ -33,19 +33,20 @@ rm <%= $example_file %>
 ```
 Denied!
 
-Use root to try to delete the file:
+==Use root permissions== to try to delete the file:
 
 ```bash
 sudo rm <%= $example_file %>
 ```
 
-It still didn't work! That's right, even root can't delete the file, without changing the file's attributes back first.
+It still didn't work! That's right, *even root can't delete the file*, without changing the file's attributes back first.
 
-Use some commands to ==remove the 'i' flag== (hint: '-i', instead of '+i').
+==Use some commands to remove the 'i' flag==
+> Hint: '-i', instead of '+i'.
 
 Now run a command to ==set the 'a' flag on <%= $example_file %>.==
 
-If you have done so correctly, attempting to overwrite the file with a test message should fail. ==Try:==
+If you have done so correctly, attempting to overwrite the file with a test message should fail. ==Run:==
 
 ```bash
 sudo bash -c 'echo "test message" > <%= $example_file %>'
@@ -57,7 +58,7 @@ Yet you should be able to append messages to the end of the file:
 ```bash
 sudo bash -c 'echo "YOURNAME: test message" >> <%= $example_file %>'
 ```
-> This should succeed, since >> causes the output of the program to be appended (added to the end of) to the specified log file, which is allowed. Use your name above, for example 'echo "Cliffe: test message" >> <%= $example_file %>'.
+> This should succeed, since >> causes the output of the program to be appended (added to the end of) to the specified log file, which is allowed. Use your name above, for example 'echo "==Cliffe==: test message" >> <%= $example_file %>'.
 
 ==View your changes== at the end of the file:
 
