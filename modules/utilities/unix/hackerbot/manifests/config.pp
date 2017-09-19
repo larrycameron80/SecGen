@@ -21,7 +21,11 @@ class hackerbot::config{
       group => 'root',
     }
 
-    $htmlfilename = "lab_r$counter.html"
+    if $secgen_parameters['hackerbot_configs'].length == 1 {
+      $htmlfilename = "index.html"
+    } else {
+      $htmlfilename = "lab_part_$counter.html"
+    }
 
     file { "/var/www/labs/$htmlfilename":
       ensure => present,
