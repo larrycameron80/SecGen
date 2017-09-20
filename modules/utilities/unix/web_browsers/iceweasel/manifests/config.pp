@@ -16,13 +16,13 @@ class iceweasel::config {
       ensure => directory,
       owner  => $username,
       group  => $username,
-    }
+    }->
     file { "/home/$username/.mozilla/firefox/profiles.ini":
       ensure => file,
       source => 'puppet:///modules/iceweasel/profiles.ini',
       owner  => $username,
       group  => $username,
-    }
+    }->
 
     # set start page via template:
     # TODO BASE ON TEMPLATE WITH HOMEPAGE
