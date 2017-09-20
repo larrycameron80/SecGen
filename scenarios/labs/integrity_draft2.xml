@@ -84,7 +84,11 @@ Diner's Club	3000 0000 0000 04</value>
 			</generator>
 		</input>
 
-		<utility module_path=".*kde_minimal"/>
+		<utility module_path=".*kde_minimal">
+			<input into="autologin_user">
+				<datastore access="0" access_json="['username']">accounts</datastore>
+			</input>
+		</utility>
 		<utility module_path=".*handy_cli_tools"/>
 
 		<utility module_path=".*parameterised_accounts">

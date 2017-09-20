@@ -4,14 +4,7 @@ class kde_minimal::install{
       package { ['kde-plasma-desktop', 'kate', 'ksnapshot', 'qtcurve']:
         ensure => 'installed',
       }
-
-      # reboot { 'after':
-      #   subscribe       => Package['kde-plasma-desktop'],
-      # }
-      # exec { 'reboot':
-      #   cwd => '/sbin/',
-      #   command => 'reboot'
-      # }
+      # TODO: reboot if kde-plasma-desktop just installed ~>
 
     }
   }

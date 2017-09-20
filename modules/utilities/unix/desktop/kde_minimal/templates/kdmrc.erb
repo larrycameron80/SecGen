@@ -59,7 +59,7 @@ ServerCmd=/usr/bin/X
 
 [X-:*-Greeter]
 AllowClose=true
-DefaultUser=bunyip
+DefaultUser=<%=@autologin_user%>
 FocusPasswd=true
 LoginMode=DefaultLocal
 PreselectUser=Previous
@@ -67,7 +67,7 @@ PreselectUser=Previous
 [X-:0-Core]
 AutoLoginEnable=true
 AutoLoginLocked=false
-AutoLoginUser=dropbear
+AutoLoginUser=<%=@autologin_user%>
 ClientLogFile=.xsession-errors
 
 [Xdmcp]

@@ -10,7 +10,12 @@
 
   <type>desktop_environment</type>
   <platform>linux</platform>
-  
+
+  <read_fact>autologin_user</read_fact>
+  <default_input into="accounts">
+    <value>false</value>
+  </default_input>
+
   <requires>
     <type>update</type>
   </requires>
