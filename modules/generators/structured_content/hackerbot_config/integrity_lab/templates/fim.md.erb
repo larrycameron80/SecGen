@@ -10,13 +10,13 @@ Hashes have security properties that enable this use:
 
 We can store a hash and later recompute the hash, to determine whether the file has changed (if the hash is different), or it is exactly the same (if the hash is the same). If you have studied digital forensics, many of these concepts will be familiar to you, since hashes are also commonly used for verifying the integrity of digital evidence.
 
-Generate an MD5 hash of your backup password file, which you copied previously:
+==Generate an MD5 hash== of your backup password file, which you copied previously:
 
 ```bash
 md5sum /home/<%= $main_user %>/backups/passwd
 ```
 
-Now calculate a hash of your current passwd file:
+Now ==calculate a hash== of your current passwd file:
 
 ```bash
 md5sum /etc/passwd
@@ -36,29 +36,27 @@ A file integrity checker is a program that compares files to previously generate
 
 The above md5sum, shasum (and so on) programs can also be used to check a list of file hashes.
 
-Create an empty file, where *your-name*, is your actual name:
+==Run the following== to generate a file containing hashes of files we can later check against:
+
+# TODO: template
 
 ```bash
-touch *your-name*
-```
-
-Run the following to generate a file containing hashes of files we can later check against:
-
-```bash
-shasum *your-name* >> /tmp/hash.sha
+mkdir /home/user/hashes/
+shasum <%= $example_file %> >> /tmp/hash.sha
 shasum /etc/passwd >> /tmp/hash.sha
 sudo shasum /etc/shadow >> /tmp/hash.sha
 shasum /bin/bash >> /tmp/hash.sha
 shasum /bin/ls >> /tmp/hash.sha
 ```
 
-Look at the contents of our new hashes file (Q to quit when done):
+==Look at the contents== of our new hashes file:
 
 ```bash
 less /tmp/hash.sha
 ```
+> Press q to quit when done
 
-Now use your new hash list to check that nothing has changed since we generated the hashes:
+Now use your new hash list to ==check that nothing has changed== since we generated the hashes:
 
 ```bash
 shasum -c /tmp/hash.sha
@@ -66,7 +64,7 @@ shasum -c /tmp/hash.sha
 
 Why does shasum fail to check the integrity of the shadow file?
 
-Make a change to our empty '*your-name*' file:
+Make a change to our empty '==*your-name*==' file:
 
 ```bash
 echo "hello" > *your-name*
@@ -85,28 +83,28 @@ You should see a nice explanation of the files that have changed since generatin
 The above can also be accomplished via a simple script (in this case a Perl script):
 	
 ```perl
-    #!/usr/bin/perl
-    # Copyleft Z. Cliffe Schreuders
-    # Licenced under the terms of the GPLv3
+  #!/usr/bin/perl
+  # Copyleft Z. Cliffe Schreuders
+  # Licenced under the terms of the GPLv3
 
-    use warnings;
-    use strict;
+  use warnings;
+  use strict;
 
-    my %files_hashes = (
-      "/etc/passwd"=>"69773dcef97bca8f689c5bc00e9335f7dd3d9e08"
-      "/bin/ls"=>"9304c5cba4e2a7dc25c2d56a6da6522e929eb848",
-      "/bin/bash"=>"54d0d9610e49a654843497c19f6211b3ae41b7c0",
-    );
+  my %files_hashes = (
+    "/etc/passwd"=>"69773dcef97bca8f689c5bc00e9335f7dd3d9e08"
+    "/bin/ls"=>"9304c5cba4e2a7dc25c2d56a6da6522e929eb848",
+    "/bin/bash"=>"54d0d9610e49a654843497c19f6211b3ae41b7c0",
+  );
 
-    foreach my $file_entry (keys %files_hashes) {
-      my $hash = `sha1sum $file_entry|awk '{print \$1}'|head -n1`;
-      chomp($hash);
-      if($hash ne $files_hashes{$file_entry}){
-        warn "FILE CHANGED: $file_entry (hash was $hash, expected $files_hashes{$file_entry})\n";
-      } else {
-        print "File unmodified: $file_entry (hash was $hash, as expected)\n";
-      }
+  foreach my $file_entry (keys %files_hashes) {
+    my $hash = `sha1sum $file_entry|awk '{print \$1}'|head -n1`;
+    chomp($hash);
+    if($hash ne $files_hashes{$file_entry}){
+      warn "FILE CHANGED: $file_entry (hash was $hash, expected $files_hashes{$file_entry})\n";
+    } else {
+      print "File unmodified: $file_entry (hash was $hash, as expected)\n";
     }
+  }
 ```
 
 This script simply iterates over a list of file paths with SHA1 hashes (stored in an associative array), and runs sha1sum for each one to check whether the files are still the same.

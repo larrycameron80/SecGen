@@ -5,27 +5,10 @@ The md5deep program (also known as sha1deep, sha256deep, and so on for different
 Run:
 
 ```bash
-sudo sha1deep -r /etc
+sudo sha1deep -r /etc/
 ```
 
-> If the md5deep command is not available, install it:
->
-> On openSUSE this can be done by first running 'cnf sha1deep', to find
-> the name of the package containing the program, then run the install
-> command it gives you, such as 'sudo zypper install md5deep'.
->
-> If you get 'PackageKit is blocking zypper', then select 'no', and kill
-> PackageKit, by running 'kill -9 *pid*', where *pid* is the number
-> reported by the previous command. Now run the above again.
->
-> If the zypper command is stuck on refreshing a repository, then press
-> 'Ctrl-C', 'a' (for abort), then proceed with the installation as per
-> normal.
->
-> Once the required software is installed, try the sha1deep command
-> again.
-
-The output of the above command will include hashes of every file in /etc, which is where system-wide configuration files are stored on Unix.
+The output of the above command will include hashes of every file in /etc/, which is where system-wide configuration files are stored on Unix.
 
 Read the sha1deep manual to understand the above command:
 
@@ -34,12 +17,14 @@ man sha1deep
 ```
 > Figure out what the -r flag does.
 >
-> (Q to quit)
+> (q to quit)
 
-We can save (redirect) this output to a file so that we have a record of the current state of our system?s configuration:
+We can save (redirect) this output to a file so that we have a record of the current state of our system's configuration:
+
+# TODO: template
 
 ```bash
-sudo sha1deep -r /etc &gt; /tmp/etc_hashes
+sudo sha1deep -r /etc > /home/user/hashes/etc_hashes
 ```
 
 This may take a minute or so, while the program calculates the hashes and sends them to standard out (known as stdout), which is then redirected to the etc_hashes file.
