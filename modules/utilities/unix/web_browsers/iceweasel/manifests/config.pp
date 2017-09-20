@@ -25,8 +25,7 @@ class iceweasel::config {
     }->
 
     # set start page via template:
-    # TODO BASE ON TEMPLATE WITH HOMEPAGE
-    file { "/home/$username/.mozilla/user.default/user.js":
+    file { "/home/$username/.mozilla/firefox/user.default/user.js":
       ensure => file,
       content => template('iceweasel/user.js.erb'),
       owner  => $username,
