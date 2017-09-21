@@ -22,8 +22,6 @@ man sha1deep
 
 We can save (redirect) this output to a file so that we have a record of the current state of our system's configuration:
 
-# TODO: template
-
 ```bash
 sudo sha1deep -r /etc > /home/<%= $main_user %>/hashes/etc_hashes
 ```
@@ -35,7 +33,7 @@ Next, let's compare the size of our list of hashes, with the actual content that
 See how big our list of hashes is:
 
 ```bash
-ls -hs /home/<%= $main_user %>/etc_hashes
+ls -hs /home/<%= $main_user %>/hashes/etc_hashes
 ```
 > (-h = human readable, -s = size)
 
@@ -52,20 +50,14 @@ This is likely in the Megabytes (or maybe even Gigabytes).
 
 Clearly, **the list of hashes is much smaller**.
 
-# TODO: UP TO HERE
-If you are **working with a classmate**, log into their system using ssh (as done previously). If you are working alone, simply run all the commands on your own system.
-
-Create a new file somewhere in /etc/, containing your name. Name the file whatever you like (for example /etc/test), although the more inconspicuous the better.
-
+Create a new file somewhere in /etc/, containing your name. Name the file whatever you like (for example /etc/test).
 > Hint: 'sudo vi /etc/test', 'i' to enter insert mode, and after typing your name, 'Esc', ':wq'.
 
-Also, change an existing file in /etc on their system, but please do be careful to only make a minor change that will **not cause damage to their system**. For example, you could use vi to edit /etc/hostname ('sudo vi /etc/hostname'), and add a comment to the file such as '#your-name: bet you can?t find this comment!'
+Also, change an existing file in /etc/, but do be careful to only make a minor change that will **not cause damage to your system**. For example, you could use vi to edit /etc/hostname ('sudo vi /etc/hostname'), and add a comment to the file such as '#find this comment!'
 
-You can now 'exit' the ssh session.
+Lets try to identify what has changed on our system...
 
-**On your own system**, lets try to identify what the 'attacker' has done to our system...
-
-Now that we have a list of hashes of our files, use shasum to check if anything has changed using our newly generated list of hashes (/tmp/etc_hashes).
+Now that we have a list of hashes of our files, ==use shasum to check if anything has changed using our newly generated list of hashes== (/home/<%= $main_user %>/hashes/etc_hashes).
 
 > Hint: look at the previous command using shasum to check hashes.
 
@@ -76,7 +68,7 @@ Md5deep/sha1deep takes a different approach to checking integrity, by checking a
 Run sha1deep to check whether any files in /etc/ do not match a hash previously generated:
 
 ```bash
-sudo sha1deep -X /tmp/etc_hashes -r /etc
+sudo sha1deep -X /home/<%= $main_user %>/hashes/etc_hashes -r /etc
 ```
 
 This should detect both modified files, both new and modified.
@@ -98,19 +90,19 @@ Another tool, hashdeep, which is included with md5deep, provides more coverage w
 Generate a hash list for /etc using hashdeep:
 
 ```bash
-sudo hashdeep -r /etc &gt; /tmp/etc_hashdeep_hashes
+sudo hashdeep -r /etc/ > /home/<%= $main_user %>/hashes/etc_hashdeep_hashes
 ```
 
 Hashdeep stores hashes in a different format than the previous tools. Have a look:
 
 ```bash
-less /tmp/etc_hashdeep_hashes
+less /home/<%= $main_user %>/hashes/etc_hashdeep_hashes
 ```
 > (q to quit)
 >
 > Note that the output includes some more information, such as the file size for each file.
 
-Delete the new file that your 'attacker' (the person who sshed into your system) created earlier:
+Delete the new file that you created earlier:
 
 ```bash
 sudo rm /etc/*whatever-the-filename-was*
@@ -119,7 +111,7 @@ sudo rm /etc/*whatever-the-filename-was*
 Conduct a hashdeep audit to detect any changes:
 
 ```bash
-sudo hashdeep -r -a -k /tmp/etc_hashdeep_hashes /etc
+sudo hashdeep -r -a -k /home/<%= $main_user %>/hashes/etc_hashdeep_hashes /etc
 ```
 > Note, that this can take a while, so feel free to start working through the next section in another terminal, if you like.
 
