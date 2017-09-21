@@ -1,9 +1,10 @@
 #### Detecting changes to resources using package management
 
-On Linux systems, package management systems are used to organise, install, and update software. The package management system has a database that keeps track of all the files for each program or software package. Depending on the package management system used, the database may maintain hashes in order to detect changes to files since install. RPM-based systems (such as Red Hat, Fedora, and OpenSUSE), store hashes of each file that is included in software packages. There are commands that can be used to detect changes to files that have occurred since being installed by the package management software.
+On Linux systems, package management systems are used to organise, install, and update software. The package management system has a database that keeps track of all the files for each program or software package. Depending on the package management system used, the database may maintain hashes in order to detect changes to files since install. DEB-based systems (such as Debian, and Ubuntu) and RPM-based systems (such as Red Hat, Fedora, and OpenSUSE), typically store hashes of each file that is included in software packages. There are commands that can be used to detect changes to files that have occurred since being installed by the package management software.
 
 Note that there are times where it is perfectly normal for a number of files to not match the 'fresh' versions that were installed: for example, configuring a system for use will involve editing configuration files that were distributed with software packages.
 
+On Debian systems MD5 hashes are stored in:
 /var/lib/dpkg/info/*.md5sums
 
 
