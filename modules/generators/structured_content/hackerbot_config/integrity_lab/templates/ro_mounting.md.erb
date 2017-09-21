@@ -48,7 +48,7 @@ ls -l /home/<%= $main_user %>/etc/newfile1
 ls -l /etc/newfile1
 ```
 
-We can use read only mounting to make filesystems and directories available read-only. Next you will ==remount the etc in read-only mode== so that even the superuser root who owns the /etc/ directory cannot make changes to its contents via the mount point.
+We can use read only mounting to make filesystems and directories available read-only. Next you will ==remount /etc/ in read-only mode== so that even the superuser root who owns the /etc/ directory cannot make changes to its contents via the mount point.
 
 ```bash
 sudo mount -o remount,ro,bind /etc/ /home/<%= $main_user %>/etc/
