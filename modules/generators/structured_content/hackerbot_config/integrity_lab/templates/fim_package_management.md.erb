@@ -4,74 +4,50 @@ On Linux systems, package management systems are used to organise, install, and 
 
 Note that there are times where it is perfectly normal for a number of files to not match the 'fresh' versions that were installed: for example, configuring a system for use will involve editing configuration files that were distributed with software packages.
 
-On Debian systems MD5 hashes are stored in:
-/var/lib/dpkg/info/*.md5sums
+==View the files containing MD5 hashes== stored for the packages on the system:
+```bash
+ls /var/lib/dpkg/info/*.md5sums
+```
 
+==View the contents== of one of the files.
 
-# TODO: debsums
+debsums is a program that can use those MD5 hashes to verify that files on a DEB-based system match the corresponding packages that are installed. By default it doesn't check configuration files (such as in /etc/).
+
+Verify all files installed by all packages:
+```bash
+sudo debsums -ac
+```
+> Ctrl-C to end the program early.
+> Options for debsum include:
 > -a also check config files
 > -e *only* check config files
 > -c only report *changed* files
 
-
-dpkg-query -S /usr/bin/firefox
-firefox: /usr/bin/firefox
-
-sudo debsums -a firefox
-
-Verify every installed package.
-sudo debsums
-
-Verify every installed package including configuration files
-sudo debsums -a
-
-Verify every installed package and report only changed files.
-sudo debsums -c
-
-
-The 'rpm' command has a -V flag for verifying the integrity of packages.
+Verify the files installed by a specific package:
+```bash
+sudo debsums firefox
+```
 
 Choose any system file on the computer, such as /etc/securetty. To determine which package the file belongs to:
 
 ```bash
-rpm -q --whatprovides *any-file-you-chose*
+dpkg-query -S *any-file-you-chose*
 ```
-> Where any-file-you-chose is any file such as /etc/securetty.
+> Where ==any-file-you-chose== is any file such as /etc/securetty.
 
-The output of that command the package-name, and is required in the next
+The output of that command contains the package-name, and is required in the next
 step.
 
 Check the integrity of the file:
 
 ```bash
-rpm -V *package-name*
+sudo debsums -a *package-name*
 ```
 > Where package-name is the output from the previous command.
 
-An example from the output would be:
-
-`` 5S.T..... c /etc/securetty ``
-Which means, it is a config file (c), and:
-
--   S = file Size differs
--   M = Mode differs (includes permissions and file type)
--   5 = MD5 sum differs
--   D = Device major/minor number mismatch
--   L = readLink(2) path mismatch
--   U = User ownership differs
--   G = Group ownership differs
--   T = mTime differs
--   P = caPabilities differ
-
-Use the above information to understand the output from your above rpm
--V command.
-
-Next verify the integrity of all of the packages on the entire system
-(this may take a while):
-
-> rpm -Va
-
 Try to understand the cause of any files failing the integrity checks.
 
-Consider the limitations of this approach: what files will (and won't)
-this approach to integrity management cover?
+==Workbook question: What are the limitations of this approach?==
+
+- What files will (and won't) this approach to integrity management cover?
+- Are the hashes protected against tampering?
