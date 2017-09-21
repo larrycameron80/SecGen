@@ -2,11 +2,12 @@
 
 The md5deep program (also known as sha1deep, sha256deep, and so on for different hash algorithms) can recursively walk through directories (and into all contained subdirectories) to generate and check lists of hashes.
 
-Run:
+==Run:==
 
 ```bash
 sudo sha1deep -r /etc/
 ```
+> You can stop the program early by pressing Ctrl-C
 
 The output of the above command will include hashes of every file in /etc/, which is where system-wide configuration files are stored on Unix.
 
@@ -15,7 +16,7 @@ Read the sha1deep manual to understand the above command:
 ```bash
 man sha1deep
 ```
-> Figure out what the -r flag does.
+> ==Figure out what the -r flag does.==
 >
 > (q to quit)
 
@@ -24,33 +25,34 @@ We can save (redirect) this output to a file so that we have a record of the cur
 # TODO: template
 
 ```bash
-sudo sha1deep -r /etc > /home/user/hashes/etc_hashes
+sudo sha1deep -r /etc > /home/<%= $main_user %>/hashes/etc_hashes
 ```
 
-This may take a minute or so, while the program calculates the hashes and sends them to standard out (known as stdout), which is then redirected to the etc_hashes file.
+This may take a minute or so, while the program calculates all the hashes and sends them to standard out (known as stdout), which is then redirected to the etc_hashes file.
 
 Next, let's compare the size of our list of hashes, with the actual content that we have hashed...
 
 See how big our list of hashes is:
 
 ```bash
-> ls -hs /tmp/etc_hashes
+ls -hs /home/<%= $main_user %>/etc_hashes
 ```
 > (-h = human readable, -s = size)
 
 This is likely to be in the Kilobytes.
 
-And for the size of all of the files in /etc:
+And for the size of all of the files in /etc/:
 
 ```bash
-sudo du -hs /etc
+sudo du -hs /etc/
 ```
 > (-h = human readable, -s summarise)
 
 This is likely in the Megabytes (or maybe even Gigabytes).
 
-Clearly, the list of hashes is much smaller.
+Clearly, **the list of hashes is much smaller**.
 
+# TODO: UP TO HERE
 If you are **working with a classmate**, log into their system using ssh (as done previously). If you are working alone, simply run all the commands on your own system.
 
 Create a new file somewhere in /etc/, containing your name. Name the file whatever you like (for example /etc/test), although the more inconspicuous the better.

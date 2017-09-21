@@ -28,7 +28,7 @@ Note that using hashes, there is no need to have the backup on-hand in order to 
 
 ==Repeat the above two commands using shasum== rather than md5sum.
 
-SHA1 and SHA2 are considered to be more secure than the 'cryptographically broken' MD5 algorithm. Although MD5 is still in use today, it is safer to use a stronger hash algorithm, since MD5 is not collision-resistant, meaning it is possible to find multiple files that result in the same hash. SHA1 is considered partially broken, so a new algorithm such as SHA2 is currently a good option. There are a number of related commands for generating hashes, named md5sum, shasum, sha224sum, sha256sum, and so on. These commands (as well as those in the next section) are readily available on most Unix systems, and are also available for Windows.
+SHA1, SHA2, and SHA3 are considered to be more secure than the 'cryptographically broken' MD5 algorithm. Although MD5 is still in use today, it is safer to use a stronger hash algorithm, since MD5 is not collision-resistant, meaning it is possible to find multiple files that result in the same hash. SHA1 is considered partially broken, so a new algorithm such as SHA2, or the newest SHA3 are currently a good options. There are a number of related commands for generating hashes, named md5sum, shasum, sha224sum, sha256sum, and so on. These commands (as well as those in the next section) are readily available on most Unix systems, and are also available for Windows.
 
 #### File integrity checkers
 
@@ -38,42 +38,41 @@ The above md5sum, shasum (and so on) programs can also be used to check a list o
 
 ==Run the following== to generate a file containing hashes of files we can later check against:
 
-# TODO: template
-
 ```bash
-mkdir /home/user/hashes/
-shasum <%= $example_file %> >> /tmp/hash.sha
-shasum /etc/passwd >> /tmp/hash.sha
-sudo shasum /etc/shadow >> /tmp/hash.sha
-shasum /bin/bash >> /tmp/hash.sha
-shasum /bin/ls >> /tmp/hash.sha
+mkdir /home/<%= $main_user %>/hashes/
+
+shasum <%= $example_file %> >> /home/<%= $main_user %>/hashes/hash.sha
+shasum /etc/passwd >> /home/<%= $main_user %>/hashes/hash.sha
+sudo shasum /etc/shadow >> /home/<%= $main_user %>/hashes/hash.sha
+shasum /bin/bash >> /home/<%= $main_user %>/hashes/hash.sha
+shasum /bin/ls >> /home/<%= $main_user %>/hashes/hash.sha
 ```
 
 ==Look at the contents== of our new hashes file:
 
 ```bash
-less /tmp/hash.sha
+less /home/<%= $main_user %>/hashes/hash.sha
 ```
 > Press q to quit when done
 
 Now use your new hash list to ==check that nothing has changed== since we generated the hashes:
 
 ```bash
-shasum -c /tmp/hash.sha
+shasum -c /home/<%= $main_user %>/hashes/hash.sha
 ```
 
-Why does shasum fail to check the integrity of the shadow file?
+==Lab book question: Why does shasum fail to check the integrity of the shadow file?==
 
-Make a change to our empty '==*your-name*==' file:
+==Make a change== to the end of <%= $example_file %>:
 
 ```bash
-echo "hello" > *your-name*
+echo "hello" >> *your-name*
 ```
 
 Check whether anything has changed since we generated hashes:
 
 ```bash
-shasum -c /tmp/hash.sha
+shasum -c /home/<%= $main_user %>/hashes/hash.sha
 ```
 
 You should see a nice explanation of the files that have changed since generating the hashes.
@@ -107,20 +106,20 @@ The above can also be accomplished via a simple script (in this case a Perl scri
   }
 ```
 
-This script simply iterates over a list of file paths with SHA1 hashes (stored in an associative array), and runs sha1sum for each one to check whether the files are still the same.
+This script iterates over a list of file paths with SHA1 hashes (stored in an associative array), and runs sha1sum for each one to check whether the files are still the same.
 
-Save the script as checker.pl
+==Save the script as checker.pl==
 > Tip: you may wish to use the default KDE GUI text editor Kate. You should be able to copy the script and paste it into Kate to save it as checker.pl.
 >
 > Alternatively you can type:
-> cat > checker.pl
+> "cat > checker.pl"
 > Paste with Ctrl-Shift-V.
 > Then, Ctrl-D, to end the input.
 
-Then run the script with:
+Then ==run the script== with:
 
 ```bash
 perl checker.pl
 ```
 
-Are the files reported as unmodified, or have they changed? Why might they be different to when I wrote the script?
+==Lab book question: Are the files reported as unmodified, or have they changed? Why might they be different to when I wrote the script?==
