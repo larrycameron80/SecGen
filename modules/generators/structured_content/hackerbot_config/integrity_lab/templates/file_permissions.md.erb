@@ -12,22 +12,24 @@ Start by creating a file with some content.
 ==Run:==
 
 ```bash
-cat > /tmp/example
+cat > /home/<%= $main_user %>/example
 ```
 > (Type some content, then press Ctrl-D to finish and return to the
 prompt.)
-> The output is sent to the file /tmp/example
+> The output is sent to the file /home/<%= $main_user %>/example
+>
+> Note that in bash **you can type *~* as shorthand for your home directory** ("/home/*<%= $main_user %>*"), but for the sake of clarity these instructions list the entire name.
 
 You can read the content:
 
 ```bash
-cat /tmp/example
+cat /home/<%= $main_user %>/example
 ```
 
 Or replace the content:
 
 ```bash
-cat > /tmp/example
+cat > /home/<%= $main_user %>/example
 ```
 > (Type some content, then press Ctrl-D to finish and return to the
 prompt.)
@@ -35,9 +37,9 @@ prompt.)
 You can view the file permissions with:
 
 ```bash
-ls -la /tmp/example
+ls -la /home/<%= $main_user %>/example
 ```
-`` -rw-r--r-- 1 user user 20 Feb 7 17:38 /tmp/example ``
+`` -rw-r--r-- 1 user user 20 Feb 7 17:38 /home/<%= $main_user %>/example ``
 
 This shows that the file is owned by *user*, and that the user has read-write access ("rw-"), others on the system have read access ("r--").
 
@@ -46,14 +48,14 @@ By default new files can only be edited by the owner of the file (more on file p
 You can remove the ability of *anyone* changing the content. ==Run:==
 
 ```bash
-chmod -w /tmp/example
+chmod -w /home/<%= $main_user %>/example
 ```
 > -w means "remove write access (for everyone)"
 
 Try changing the content. ==Run:==
 
 ```bash
-cat > /tmp/example
+cat > /home/<%= $main_user %>/example
 ```
 
 You can't.
@@ -61,7 +63,7 @@ You can't.
 You can remove the ability of **everyone else** changing the content. ==Run:==
 
 ```bash
-chmod u+w,o-rw /tmp/example
+chmod u+w,o-rw /home/<%= $main_user %>/example
 ```
 > u+w: user who owns the file, add write access
 > o-rw: others, remove read and write access
@@ -70,15 +72,15 @@ chmod u+w,o-rw /tmp/example
 You can view the file permissions with:
 
 ```bash
-ls -la /tmp/example
+ls -la /home/<%= $main_user %>/example
 ```
-`` -rw-------- 1 user user 20 Feb 7 17:38 /tmp/example ``
+`` -rw-------- 1 user user 20 Feb 7 17:38 /home/<%= $main_user %>/example ``
 
 Note that **the root user can access any files**, regardless of file permissions.
 
 ```bash
-chmod -w /tmp/example
-sudo cat /tmp/example
+chmod -w /home/<%= $main_user %>/example
+sudo cat /home/<%= $main_user %>/example
 ```
 > Enter your password, and note that as root you can access the file regardless of permissions.
 
