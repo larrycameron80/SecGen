@@ -12,8 +12,19 @@
   <platform>linux</platform>
 
   <read_fact>autologin_user</read_fact>
-  <default_input into="accounts">
+  <read_fact>accounts</read_fact>
+  <read_fact>autostart_konsole</read_fact>
+
+  <default_input into="autologin_user">
     <value>false</value>
+  </default_input>
+
+  <default_input into="accounts">
+    <generator type="account"/>
+  </default_input>
+
+  <default_input into="autostart_konsole">
+    <value>true</value>
   </default_input>
 
   <requires>

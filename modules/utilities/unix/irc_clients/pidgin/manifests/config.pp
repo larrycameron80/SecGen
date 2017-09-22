@@ -12,6 +12,7 @@ class pidgin::config {
 
     file { ["$conf_dir",
             "$conf_dir/smileys/",
+            "$conf_dir/icons/",
             "$conf_dir/certificates",
             "$conf_dir/certificates/x509",
             "$conf_dir/certificates/x509/tls_peers"]:
@@ -44,6 +45,11 @@ class pidgin::config {
     file { "$conf_dir/status.xml":
       ensure  => file,
       source  => 'puppet:///modules/pidgin/status.xml',
+      require => File[$conf_dir],
+    }
+    file { "$conf_dir/icons/skullandusb.svg":
+      ensure  => file,
+      source  => 'puppet:///modules/pidgin/skullandusb.svg',
       require => File[$conf_dir],
     }
 

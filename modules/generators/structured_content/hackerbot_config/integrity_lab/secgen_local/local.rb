@@ -75,6 +75,7 @@ class HackerbotConfigGenerator < StringGenerator
       end
 
       lab_sheet += "#### #{name} Attack ##{index + 1}\n"
+      lab_sheet += "![tiny-right](images/skullandusb.svg)\n"
       lab_sheet += "Use what you have learned to complete the bot's challenge. You can skip the bot to here, by saying '**goto #{index + 1}**'\n\n"
       lab_sheet += "> #{name}: \"#{attack.xpath('prompt').first.content}\" \n\n"
       lab_sheet += "Do any necessary preparation, then when you are ready for the bot to complete the action/attack, ==say '**ready**'==\n\n"
