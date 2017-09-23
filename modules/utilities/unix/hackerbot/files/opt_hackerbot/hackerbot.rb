@@ -7,6 +7,54 @@ require 'programr'
 require 'getoptlong'
 require 'thwait'
 
+def check_output_conditions(bot_name, bots, current, lines, m)
+  condition_met = false
+  bots[bot_name]['attacks'][current]['condition'].each do |condition|
+    if !condition_met && condition.key?('output_matches') && lines =~ /#{condition['output_matches']}/
+      condition_met = true
+      m.reply "#{condition['message']}"
+    end
+    if !condition_met && condition.key?('output_not_matches') && lines !~ /#{condition['output_not_matches']}/
+      condition_met = true
+      m.reply "#{condition['message']}"
+    end
+    if !condition_met && condition.key?('output_equals') && lines == condition['output_equals']
+      condition_met = true
+      m.reply "#{condition['message']}"
+    end
+
+    if condition_met
+      # Repeated logic for trigger_next_attack
+      if condition.key?('trigger_next_attack')
+        # is this the last one?
+        if bots[bot_name]['current_attack'] < bots[bot_name]['attacks'].length - 1
+          bots[bot_name]['current_attack'] += 1
+          bots[bot_name]['current_quiz'] = nil
+          current = bots[bot_name]['current_attack']
+
+          sleep(1)
+          # prompt for current hack
+          m.reply bots[bot_name]['attacks'][current]['prompt']
+        else
+          m.reply bots[bot_name]['messages']['last_attack'].sample
+        end
+      end
+
+      if condition.key?('trigger_quiz')
+        m.reply bots[bot_name]['attacks'][current]['quiz']['question']
+        m.reply bots[bot_name]['messages']['say_answer']
+        bots[bot_name]['current_quiz'] = 0
+      end
+    end
+  end
+  unless condition_met
+    if bots[bot_name]['attacks'][current]['else_condition']
+      m.reply bots[bot_name]['attacks'][current]['else_condition']['message']
+    end
+  end
+  current
+end
+
 def read_bots (irc_server_ip_address)
   bots = {}
   Dir.glob("config/*.xml").each do |file|
@@ -146,7 +194,9 @@ def read_bots (irc_server_ip_address)
           if quiz != nil
             correct_answer = quiz['answer'].
                 gsub(/{{post_command_output}}/, bots[bot_name]['attacks'][current]['post_command_output']).
-                gsub(/{{shell_command_output_first_line}}/, bots[bot_name]['attacks'][current]['get_shell_command_output'].split("\n").first)
+                gsub(/{{shell_command_output_first_line}}/, bots[bot_name]['attacks'][current]['get_shell_command_output'].split("\n").first).
+                gsub(/{{pre_shell_command_output_first_line}}/, bots[bot_name]['attacks'][current]['get_shell_command_output'].split("\n").first)
+
 
             if answer.match(correct_answer)
               m.reply bots[bot_name]['messages']['correct_answer']
@@ -162,6 +212,7 @@ def read_bots (irc_server_ip_address)
                   sleep(1)
                   # prompt for current hack
                   m.reply bots[bot_name]['attacks'][current]['prompt']
+                  m.reply bots[bot_name]['messages']['say_ready'].sample
                 else
                   m.reply bots[bot_name]['messages']['last_attack'].sample
                 end
@@ -235,6 +286,17 @@ def read_bots (irc_server_ip_address)
           m.reply bots[bot_name]['messages']['getting_shell'].sample
           current = bots[bot_name]['current_attack']
 
+          if bots[bot_name]['attacks'][current].key?('pre_shell')
+            pre_shell_cmd = bots[bot_name]['attacks'][current]['pre_shell'].clone
+            pre_output = `#{pre_shell_cmd}`
+            unless bots[bot_name]['attacks'][current].key?('suppress_command_output_feedback')
+              m.reply "FYI: #{pre_output}"
+            end
+            bots[bot_name]['attacks'][current]['get_shell_command_output'] = pre_output
+            current = check_output_conditions(bot_name, bots, current, pre_output, m)
+
+          end
+
           # use bot-wide method for obtaining shell, unless specified per-attack
           if bots[bot_name]['attacks'][current].key?('get_shell')
             shell_cmd = bots[bot_name]['attacks'][current]['get_shell'].clone
@@ -252,7 +314,7 @@ def read_bots (irc_server_ip_address)
             # check whether we have shell by echoing "shelltest"
             # sleep(1)
             stdin.puts "echo shelltest\n"
-            sleep(2)
+            sleep(3)
 
             # non-blocking read from buffer
             lines = ''
@@ -284,50 +346,7 @@ def read_bots (irc_server_ip_address)
               end
               Print.debug lines
 
-              condition_met = false
-              bots[bot_name]['attacks'][current]['condition'].each do |condition|
-                if !condition_met && condition.key?('output_matches') && lines =~ /#{condition['output_matches']}/
-                  condition_met = true
-                  m.reply "#{condition['message']}"
-                end
-                if !condition_met && condition.key?('output_not_matches') && lines !~ /#{condition['output_not_matches']}/
-                  condition_met = true
-                  m.reply "#{condition['message']}"
-                end
-                if !condition_met && condition.key?('output_equals') && lines == condition['output_equals']
-                  condition_met = true
-                  m.reply "#{condition['message']}"
-                end
-
-                if condition_met
-                  # Repeated logic for trigger_next_attack
-                  if condition.key?('trigger_next_attack')
-                    # is this the last one?
-                    if bots[bot_name]['current_attack'] < bots[bot_name]['attacks'].length - 1
-                      bots[bot_name]['current_attack'] += 1
-                      bots[bot_name]['current_quiz'] = nil
-                      current = bots[bot_name]['current_attack']
-
-                      sleep(1)
-                      # prompt for current hack
-                      m.reply bots[bot_name]['attacks'][current]['prompt']
-                    else
-                      m.reply bots[bot_name]['messages']['last_attack'].sample
-                    end
-                  end
-
-                  if condition.key?('trigger_quiz')
-                    m.reply bots[bot_name]['attacks'][current]['quiz']['question']
-                    m.reply bots[bot_name]['messages']['say_answer']
-                    bots[bot_name]['current_quiz'] = 0
-                  end
-                end
-              end
-              unless condition_met
-                if bots[bot_name]['attacks'][current]['else_condition']
-                  m.reply bots[bot_name]['attacks'][current]['else_condition']['message']
-                end
-              end
+              current = check_output_conditions(bot_name, bots, current, lines, m)
 
             else
               Print.debug("Shell failed...")
