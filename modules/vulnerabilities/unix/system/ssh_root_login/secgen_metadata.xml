@@ -18,10 +18,6 @@
   <read_fact>leaked_filenames</read_fact>
 
 
-  <default_input into="strings_to_leak">
-    <generator type="flag_generator"/>
-  </default_input>
-
   <default_input into="root_password">
     <generator module_path=".*weak_password.*"/>
   </default_input>

@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-require_relative '../../../../../../lib/objects/local_string_generator.rb'
+require_relative 'local_string_generator.rb'
 require 'erb'
 require 'fileutils'
 require 'redcarpet'
@@ -12,20 +12,27 @@ class HackerbotConfigGenerator < StringGenerator
   attr_accessor :html_rendered
   attr_accessor :html_TOC_rendered
   attr_accessor :title
-  LOCAL_DIR = File.expand_path('../../',__FILE__)
-  TEMPLATES_PATH = "#{LOCAL_DIR}/templates/"
-  CONFIG_TEMPLATE_PATH = "#{LOCAL_DIR}/templates/integrity_lab.xml.erb"
-  HTML_TEMPLATE_PATH = "#{LOCAL_DIR}/templates/labsheet.html.erb"
+
+  attr_accessor :local_dir
+  attr_accessor :templates_path
+  attr_accessor :config_template_path
+  attr_accessor :html_template_path
 
   def initialize
     super
     self.module_name = 'Hackerbot Config Generator'
+    self.title = ''
     self.accounts = []
     self.flags = []
     self.root_password = ''
     self.html_rendered = ''
     self.html_TOC_rendered = ''
-    self.title = 'Integrity management'
+
+    self.local_dir = File.expand_path('../../', __FILE__)
+    self.templates_path = "#{self.local_dir}/templates/"
+    self.config_template_path = "#{self.local_dir}/templates/integrity_lab.xml.erb"
+    self.html_template_path = "#{self.local_dir}/templates/labsheet.html.erb"
+
   end
 
   def get_options_array
@@ -83,7 +90,7 @@ class HackerbotConfigGenerator < StringGenerator
   def generate
 
     # Print.debug self.accounts.to_s
-    xml_template_out = ERB.new(File.read(CONFIG_TEMPLATE_PATH), 0, '<>-')
+    xml_template_out = ERB.new(File.read(self.config_template_path), 0, '<>-')
     xml_config = xml_template_out.result(self.get_binding)
 
     lab_sheet_markdown = generate_lab_sheet(xml_config)
@@ -92,7 +99,7 @@ class HackerbotConfigGenerator < StringGenerator
     self.html_rendered = redcarpet.render(lab_sheet_markdown).force_encoding('UTF-8')
     redcarpet_toc = Redcarpet::Markdown.new(Redcarpet::Render::HTML_TOC.new())
     self.html_TOC_rendered = redcarpet_toc.render(lab_sheet_markdown).force_encoding('UTF-8')
-    html_template_out = ERB.new(File.read(HTML_TEMPLATE_PATH), 0, '<>-')
+    html_template_out = ERB.new(File.read(self.html_template_path), 0, '<>-')
     html_out = html_template_out.result(self.get_binding)
 
     json = {'xml_config' => xml_config.force_encoding('UTF-8'), 'html_lab_sheet' => html_out.force_encoding('UTF-8')}.to_json.force_encoding('UTF-8')
@@ -105,6 +112,3 @@ class HackerbotConfigGenerator < StringGenerator
     binding
   end
 end
-
-
-HackerbotConfigGenerator.new.run

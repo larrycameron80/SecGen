@@ -3,14 +3,12 @@
 <generator xmlns="http://www.github/cliffe/SecGen/generator"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.github/cliffe/SecGen/generator">
-  <name>Hackerbot config for an integrity lab</name>
+  <name>Hackerbot config for a protecting integrity lab</name>
   <author>Z. Cliffe Schreuders</author>
   <module_license>GPLv3</module_license>
   <description>Generates a config file for a hackerbot for an integrity lab.
     Topics covered: Protecting integrity with file attributes;
-    Protecting integrity with read-only filesystems;
-    Detecting changes to resources using backups;
-    File integrity checkers.</description>
+    Protecting integrity with read-only filesystems.</description>
 
   <type>hackerbot_config</type>
   <platform>linux</platform>
