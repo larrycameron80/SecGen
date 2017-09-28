@@ -43,17 +43,10 @@ class HackerbotConfigGenerator < StringGenerator
         self.accounts << arg;
       when '--flags'
         self.flags << arg;
-      # when '--topic'
-      #   # check topic exists
-      #   self.topic << arg;
     end
   end
 
   def generate_lab_sheet(xml_config)
-    # parsed = Nori.new.parse(xml_config)
-    # Print.debug parsed.to_s
-    # lab_sheet = parsed['tutorial']['introduction']
-    # Print.debug lab_sheet
     lab_sheet = ''
     begin
       doc = Nokogiri::XML(xml_config)
@@ -64,7 +57,6 @@ class HackerbotConfigGenerator < StringGenerator
     # remove xml namespaces for ease of processing
     doc.remove_namespaces!
     # for each element in the vulnerability
-    # Print.debug doc.to_s
     hackerbot = doc.xpath("/hackerbot")
     name = hackerbot.xpath("name").first.content
     lab_sheet += hackerbot.xpath("tutorial_info/tutorial").first.content + "\n"
