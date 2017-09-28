@@ -38,6 +38,17 @@ class SystemReader
     # remove xml namespaces for ease of processing
     doc.remove_namespaces!
 
+    # hack for networks -- TODO: Remove me ASAP DO NOT MERGE TO MASTER
+    ranges = []
+    network_ranges.each { |range|
+      doc.xpath('/scenario/system').size.times { |count|
+        range_array = range.split('.')
+        range_array[-1] = count+2
+        ranges << range_array.join('.')
+      }
+    }
+    network_ranges = ranges
+
     doc.xpath('/scenario/system').each_with_index do |system_node, system_index|
       module_selectors = []
       system_attributes = {}
