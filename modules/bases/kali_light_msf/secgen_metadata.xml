@@ -19,4 +19,6 @@
   <reference>https://app.vagrantup.com/cliffe</reference>
   <software_license>various</software_license>
 
+  <ovirt_template>kali_linux_msf</ovirt_template>
+
 </base>
