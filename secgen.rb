@@ -63,7 +63,7 @@ def build_config(scenario, out_dir, options)
   Print.info 'Reading configuration file for virtual machines you want to create...'
   # read the scenario file describing the systems, which contain vulnerabilities, services, etc
   # this returns an array/hashes structure
-  systems = SystemReader.read_scenario(scenario)
+  systems = SystemReader.read_scenario(scenario, options[:ip_ranges])
   Print.std "#{systems.size} system(s) specified"
 
   Print.info 'Reading available base modules...'
