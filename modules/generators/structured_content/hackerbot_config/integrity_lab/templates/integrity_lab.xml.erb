@@ -104,7 +104,7 @@
 
 	<tutorial_info>
 		<title>Integrity Management: Protecting Against and Detecting Change</title>
-		<tutorial><%= File.read TEMPLATES_PATH + 'intro.md.erb' %></tutorial>
+		<tutorial><%= ERB.new(File.read TEMPLATES_PATH + 'intro.md.erb').result(self.get_binding) %></tutorial>
 		<footer><%= File.read TEMPLATES_PATH + 'integrity_limitations.md.erb' %>
 
 <%= File.read TEMPLATES_PATH + 'resources.md.erb' %>
