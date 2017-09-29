@@ -16,6 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 <%  system.module_selections.each do |selected_module|
       if selected_module.module_type == 'base'
         @base_type = selected_module.attributes['type']
+        @ovirt_template = selected_module.attributes['ovirt_template']
         @cpu_word_size = selected_module.attributes['cpu_word_size'].first.downcase
         if (@options.has_key? :ovirtuser) && (@options.has_key? :ovirtpass)
           @ovirt_base_template = selected_module.attributes['ovirt_template'].first
@@ -132,7 +133,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   <%       end %>
 <%     else -%>
   <%       if (@options.has_key? :ovirtuser) && (@options.has_key? :ovirtpass) %>
+  <%         if @ovirt_template and @ovirt_template.include? 'kali_linux_msf' %>
+      <%= system.name %>.vm.provision 'shell', inline: "echo \"auto lo\niface lo inet loopback\n\nauto eth0\niface eth0 inet static\n\taddress <%= resolve_network(selected_module.attributes['range'].first)%>\" > /etc/network/interfaces"
+  <%         else %>
       <%= system.name %>.vm.network :<%= selected_module.attributes['type'].first %>, :ovirt__ip => "<%= resolve_network(selected_module.attributes['range'].first)%>", :ovirt__network_name => '<%= "#{@options[:ovirtnetwork]}" %>'
+  <%         end %>
   <%       else %>
       <%= system.name %>.vm.network :<%= selected_module.attributes['type'].first %>, ip: "<%= resolve_network(selected_module.attributes['range'].first)%>"
   <%       end %>
