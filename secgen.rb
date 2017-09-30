@@ -103,7 +103,7 @@ def build_config(scenario, out_dir, options)
   all_available_modules = all_available_bases + all_available_builds + all_available_vulnerabilties +
       all_available_services + all_available_utilities + all_available_generators + all_available_encoders + all_available_networks
   # update systems with module selections
-  systems.map! {|system|
+  systems.map! { |system|
     system.module_selections = system.resolve_module_selection(all_available_modules)
     system
   }
@@ -135,6 +135,9 @@ def build_vms(project_dir, options)
   if GemExec.exe('vagrant', project_dir, "#{command} #{system}")
     Print.info 'VMs created.'
     if options[:shutdown]
+      if options[:ovirtuser] and options[:ovirtpass]
+        sleep(30)
+      end
       GemExec.exe('vagrant', project_dir, 'halt')
     end
   else
@@ -149,7 +152,7 @@ end
 #
 # @author Jason Keighley
 # @return [Void]
-def create_ewf_image(drive_path ,image_output_location)
+def create_ewf_image(drive_path, image_output_location)
   ## Make E01 image
   Print.info "Creating E01 image with path #{image_output_location}.E01"
   Print.info 'This may take a while:'
@@ -186,8 +189,8 @@ def make_forensic_image(project_dir, image_output_location, image_type)
 
   image_output_location = "#{project_dir}/#{drive_name}".sub(/.vmdk|.vdi/, '') unless image_output_location
 
-    ## Ensure all vms are shutdown
-    system "cd '#{project_dir}' && vagrant halt"
+  ## Ensure all vms are shutdown
+  system "cd '#{project_dir}' && vagrant halt"
 
   case image_type.downcase
     when 'raw', 'dd'
@@ -219,14 +222,14 @@ end
 
 def list_scenarios
   Print.std "Full paths to scenario files are displayed below"
-  Dir["#{ROOT_DIR}/scenarios/**/*"].select{ |file| !File.directory? file}.each_with_index do |scenario_name, scenario_number|
+  Dir["#{ROOT_DIR}/scenarios/**/*"].select { |file| !File.directory? file }.each_with_index do |scenario_name, scenario_number|
     Print.std "#{scenario_number}) #{scenario_name}"
   end
 end
 
 def list_projects
   Print.std "Full paths to project directories are displayed below"
-  Dir["#{PROJECTS_DIR}/*"].select{ |file| !File.file? file}.each_with_index do |scenario_name, scenario_number|
+  Dir["#{PROJECTS_DIR}/*"].select { |file| !File.file? file }.each_with_index do |scenario_name, scenario_number|
     Print.std "#{scenario_number}) #{scenario_name}"
   end
 end
@@ -282,28 +285,28 @@ end
 
 # Get command line arguments
 opts = GetoptLong.new(
-  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--project', '-p', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--scenario', '-s', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--prefix', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--system', '-y', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--reload', '-r', GetoptLong::NO_ARGUMENT],
-  [ '--gui-output', '-g', GetoptLong::NO_ARGUMENT],
-  [ '--nopae', GetoptLong::NO_ARGUMENT],
-  [ '--hwvirtex', GetoptLong::NO_ARGUMENT],
-  [ '--vtxvpid', GetoptLong::NO_ARGUMENT],
-  [ '--memory-per-vm', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--total-memory', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--cpu-cores', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--max-cpu-usage', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--shutdown', GetoptLong::NO_ARGUMENT],
-  [ '--network-ranges', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--forensic-image-type', GetoptLong::REQUIRED_ARGUMENT],
-  [ '--ovirtuser', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--ovirtpass', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--ovirt-url', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--ovirt-cluster', GetoptLong::REQUIRED_ARGUMENT ],
-  [ '--ovirt-network', GetoptLong::REQUIRED_ARGUMENT ],
+    ['--help', '-h', GetoptLong::NO_ARGUMENT],
+    ['--project', '-p', GetoptLong::REQUIRED_ARGUMENT],
+    ['--scenario', '-s', GetoptLong::REQUIRED_ARGUMENT],
+    ['--prefix', GetoptLong::REQUIRED_ARGUMENT],
+    ['--system', '-y', GetoptLong::REQUIRED_ARGUMENT],
+    ['--reload', '-r', GetoptLong::NO_ARGUMENT],
+    ['--gui-output', '-g', GetoptLong::NO_ARGUMENT],
+    ['--nopae', GetoptLong::NO_ARGUMENT],
+    ['--hwvirtex', GetoptLong::NO_ARGUMENT],
+    ['--vtxvpid', GetoptLong::NO_ARGUMENT],
+    ['--memory-per-vm', GetoptLong::REQUIRED_ARGUMENT],
+    ['--total-memory', GetoptLong::REQUIRED_ARGUMENT],
+    ['--cpu-cores', GetoptLong::REQUIRED_ARGUMENT],
+    ['--max-cpu-usage', GetoptLong::REQUIRED_ARGUMENT],
+    ['--shutdown', GetoptLong::NO_ARGUMENT],
+    ['--network-ranges', GetoptLong::REQUIRED_ARGUMENT],
+    ['--forensic-image-type', GetoptLong::REQUIRED_ARGUMENT],
+    ['--ovirtuser', GetoptLong::REQUIRED_ARGUMENT],
+    ['--ovirtpass', GetoptLong::REQUIRED_ARGUMENT],
+    ['--ovirt-url', GetoptLong::REQUIRED_ARGUMENT],
+    ['--ovirt-cluster', GetoptLong::REQUIRED_ARGUMENT],
+    ['--ovirt-network', GetoptLong::REQUIRED_ARGUMENT],
 )
 
 scenario = SCENARIO_XML
@@ -421,7 +424,7 @@ case ARGV[0]
     end
 
   when 'create-forensic-image'
-    image_type = options.has_key?(:forensic_image_type)?options[:forensic_image_type]:'raw';
+    image_type = options.has_key?(:forensic_image_type) ? options[:forensic_image_type] : 'raw';
 
     if project_dir
       build_vms(project_dir, options[:shutdown])
