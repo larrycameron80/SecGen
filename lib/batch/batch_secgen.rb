@@ -8,6 +8,7 @@ require_relative '../helpers/constants.rb'
 # Globals
 @db_conn = nil
 @secgen_args = ''
+ENV['http_proxy'] = 'http://192.168.201.51:3128'
 
 # Displays secgen_batch usage data
 def usage
@@ -87,7 +88,7 @@ def get_delete_opts
 end
 
 def parse_opts(opts)
-  options = {:instances => '', :max_threads => 1, :id => '', :all => false}
+  options = {:instances => '', :max_threads => 2, :id => '', :all => false}
   opts.each do |opt, arg|
     case opt
       when '--instances'

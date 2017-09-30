@@ -15,7 +15,7 @@ class hackerbot::service{
   }~>
   # reload services (networking needs to be reloaded on the kali virtualbox vm)
   exec { 'hackerbot-systemd-reload':
-    command     => 'systemctl daemon-reload; service networking restart; service hackerbot restart',
+    command     => 'systemctl daemon-reload',
     path        => [ '/usr/bin', '/bin', '/usr/sbin' ],
     refreshonly => true,
   }
