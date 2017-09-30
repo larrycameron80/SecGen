@@ -7,7 +7,7 @@
 <% require 'json'
    require 'base64'
    require 'securerandom' -%>
-<% prefix = @options[:prefix] ? @options[:prefix] + '_' : ''-%>
+<% prefix = @options[:prefix] ? @options[:prefix] + '-' : 'SecGen-'-%>
 
 VAGRANTFILE_API_VERSION = "2"
 
@@ -118,7 +118,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 <%   case selected_module.module_type
      when 'base' -%>
     <% if (@options.has_key? :ovirtuser) && (@options.has_key? :ovirtpass) %>   # TODO
-    <%= system.name %>.vm.hostname = '<%= "#{prefix}SecGen-#{system.name}-#{Time.new.strftime("%Y%m%d-%H%M")}".tr('_', '-') %>'
+    <%= system.name %>.vm.hostname = '<%= "#{prefix}#{system.name}".tr('_', '-') %>'
     <%= system.name %>.vm.box = 'ovirt4'
     <%= system.name %>.vm.box_url = 'https://github.com/myoung34/vagrant-ovirt4/blob/master/example_box/dummy.box?raw=true'
     <% else %>
