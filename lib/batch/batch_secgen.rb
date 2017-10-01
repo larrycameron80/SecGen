@@ -8,6 +8,7 @@ require_relative '../helpers/constants.rb'
 # Globals
 @db_conn = nil
 @secgen_args = ''
+@ranges_in_table = nil
 
 # Displays secgen_batch usage data
 def usage
@@ -76,9 +77,10 @@ end
 
 def get_delete_opts
   delete_options = misc_opts + [['--id', GetoptLong::REQUIRED_ARGUMENT],
-                                ['--all', GetoptLong::OPTIONAL_ARGUMENT]]
+                                ['--all', GetoptLong::OPTIONAL_ARGUMENT],
+                                ['--failed', GetoptLong::OPTIONAL_ARGUMENT]]
   options = parse_opts(GetoptLong.new(*delete_options))
-  if options[:id] == '' and options[:all] == false
+  if options[:id] == '' and options[:all] == false and options[:failed] == false
     Print.err 'Error: The delete command requires an argument.'
     usage
   else
@@ -100,6 +102,8 @@ def parse_opts(opts)
         options[:random_ips] = arg.to_i
       when '--all'
         options[:all] = true
+      when '--failed'
+        options[:failed] = true
       else
         Print.err 'Invalid argument'
         exit(false)
@@ -196,6 +200,8 @@ end
 def delete(options)
   if options[:id] != ''
     delete_id(options[:id])
+  elsif options[:failed]
+    delete_failed
   elsif options[:all]
     delete_all
   end
@@ -237,6 +243,17 @@ def update_status(job_id, status)
   @db_conn.exec_prepared(statement,[status_enum[status], job_id])
 end
 
+def delete_failed
+  Print.info 'Are you sure you want to DELETE failed jobs from the queue table? [y/N]'
+  input = STDIN.gets.chomp
+  if input == 'Y' or input == 'y'
+    Print.info "'Deleting all jobs with status == 'error' from Queue table"
+    @db_conn.exec_params("DELETE FROM queue WHERE status = 'error';")
+  else
+    exit
+  end
+end
+
 def delete_all
   Print.info 'Are you sure you want to DELETE all jobs from the queue table? [y/N]'
   input = STDIN.gets.chomp
@@ -255,20 +272,47 @@ def delete_id(id)
   @db_conn.exec_prepared(statement, [id])
 end
 
+def secgen_arg_network_ranges(secgen_args)
+  ranges_in_arg = []
+  split_args = secgen_args.split(' ')
+  network_ranges_index = split_args.find_index('--network-ranges')
+  if network_ranges_index != nil
+    range = split_args[network_ranges_index + 1]
+    if range.include?(',')
+      range.split(',').each { |split_range| ranges_in_arg << split_range }
+    else
+      ranges_in_arg << range
+    end
+  end
+  ranges_in_arg
+end
+
 def generate_range_arg(options)
   range_arg = ''
   if options.has_key? :random_ips
-    network_ranges = []
+
+    # Check if there are jobs in the DB containing ips. Assign once so that repeated calls don't get added to the list.
+    # TODO: Prompt to see if they want to exclude ranges currently in the table
+    if @ranges_in_table == nil
+      @ranges_in_table = []
+      table_entries = select_all
+      table_entries.each{ |job|
+        @ranges_in_table += secgen_arg_network_ranges(job['secgen_args'])
+      }
+    end
+
+    generated_network_ranges = []
     scenario_networks_qty = options[:random_ips]
     scenario_networks_qty.times {
       range = generate_range
       # Check for uniqueness
-      while network_ranges.include?(range)
+      while @ranges_in_table.include?(range)
         range = generate_range
       end
-      network_ranges << range
+      @ranges_in_table << range
+      generated_network_ranges << range
     }
-    random_ip_string = network_ranges.join(',')
+    random_ip_string = generated_network_ranges.join(',')
     range_arg = "--network-ranges #{random_ip_string} "
   end
   range_arg
