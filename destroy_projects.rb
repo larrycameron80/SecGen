@@ -8,5 +8,11 @@ file_handle = File.open('week1_fixing/failed_projects', 'r')
 
 file_handle.each_line { |dir_name|
   project_dir = "#{current_directory}/projects/#{dir_name.chomp}"
-  GemExec.exe('vagrant', project_dir, 'destroy')
+  Print.info "Destroying Project dir: #{project_dir}"
+  if GemExec.exe('vagrant', project_dir, 'destroy')
+    Print.info "successfully destroyed."
+  else
+    Print.err "destroy failed."
+  end
+
 }

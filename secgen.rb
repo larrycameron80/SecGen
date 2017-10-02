@@ -141,6 +141,7 @@ def build_vms(project_dir, options)
       GemExec.exe('vagrant', project_dir, 'halt')
     end
   else
+    GemExec.exe('vagrant', project_dir, 'destroy')
     Print.err 'Error creating VMs, Exiting SecGen.'
     exit 1
   end
