@@ -129,13 +129,13 @@ Diner's Club	3000 0000 0000 04</value>
 				<value>true</value>
 			</input>
 			<input into="start_page">
-				<value>http://172.16.0.3</value>
+				<value>http://172.16.0.4</value>
 			</input>
 		</utility>
 
 		<utility module_path=".*pidgin">
 			<input into="server_ip">
-				<value>172.16.0.3</value>
+				<value>172.16.0.4</value>
 			</input>
 			<input into="accounts">
 				<datastore access="0">accounts</datastore>
@@ -190,12 +190,15 @@ Diner's Club	3000 0000 0000 04</value>
 
 		<utility module_path=".*hackerbot">
 			<input into="hackerbot_configs">
-				<generator module_path=".*integrity_protection">
+				<generator module_path=".*backups">
 					<input into="accounts">
 						<datastore>accounts</datastore>
 					</input>
 					<input into="root_password">
 						<datastore>desktop_root_password</datastore>
+					</input>
+					<input into="server_ip">
+						<value>172.16.0.3</value>
 					</input>
 				</generator>
 			</input>
