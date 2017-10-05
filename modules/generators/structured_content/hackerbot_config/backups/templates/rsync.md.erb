@@ -45,7 +45,7 @@ Now, if you were to ==delete a local file== that had been backed up:
 sudo rm /etc/hello
 ```
 
-Even if you ==re-sync your local changes== to the server (your classmate’s system), the file will not be deleted from the server:
+Even if you ==re-sync your local changes== to the server (your classmate's system), the file will not be deleted from the server:
 
 ```bash
 sudo rsync -avzh /etc <%= $main_user %>@<%= $server_ip %>:/home/<%= $main_user %>/remote-rsync-backup/
