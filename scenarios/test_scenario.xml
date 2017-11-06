@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<scenario xmlns="http://www.github/cliffe/SecGen/scenario"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.github/cliffe/SecGen/scenario">
+
+	<!-- Testing -->
+
+	<system>
+		<system_name>storage_server</system_name>
+		<base module_path=".*debian_puppet_32.*"/>
+
+		<!-- Define static IP addresses for the scenario here, in order! -->
+		<input into_datastore="IP_addresses">
+			<value>10.2.0.2</value>
+		</input>
+
+		<service type="ircd"/>
+
+		<network range="dhcp"/>
+		<network type="private_network">
+			<input into="IP_address">
+				<datastore access="next">IP_addresses</datastore>
+			</input>
+		</network>
+	</system>
+
+</scenario>
