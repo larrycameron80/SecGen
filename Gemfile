@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 #production gems go here
-gem 'nokogiri'
+gem 'nokogiri', '>= 1.8.3'
 gem 'puppet'
 gem 'librarian-puppet'
-gem 'wordlist'
+gem 'wordlist', '>= 0.1.1'
 gem 'faker'
 gem 'forgery'
 gem 'redcarpet'
