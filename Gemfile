@@ -19,12 +19,12 @@ gem 'cinch'
 gem 'nori'
 gem 'programr', :git => "http://github.com/robertjwhitney/programr.git"
 gem 'process_helper'
-gem 'ovirt-engine-sdk'
+gem 'ovirt-engine-sdk', '>= 4.1.8'
 
 #development only gems go here
 group :test, :development do
   gem 'minitest'
   gem 'rake'
-  gem 'rdoc'
+  gem 'rdoc', '>= 4.3.0'
   gem 'yard'
 end
