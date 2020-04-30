@@ -24,7 +24,7 @@ GEM
     hiera (3.2.0)
       json_pure
     i18n (0.7.0)
-    json (1.8.3)
+    json (2.3.0)
     json_pure (1.8.3)
     librarian-puppet (2.2.3)
       librarianp (>= 0.6.3)
@@ -43,8 +43,8 @@ GEM
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
     nori (2.6.0)
-    ovirt-engine-sdk (4.1.8)
-      json
+    ovirt-engine-sdk (4.3.1)
+      json (>= 1, < 3)
     pg (0.21.0)
     pkg-config (1.1.7)
     process_helper (0.1.1)
@@ -59,8 +59,7 @@ GEM
       minitar
       semantic_puppet (~> 0.1.0)
     rake (11.1.2)
-    rdoc (4.2.2)
-      json (~> 1.4)
+    rdoc (6.2.1)
     redcarpet (3.4.0)
     rmagick (2.16.0)
     rqrcode (0.10.1)
@@ -74,6 +73,7 @@ GEM
     wordlist (0.1.1)
       spidr (~> 0.2)
     yard (0.8.7.6)
+    zip (2.0.2)
     zipruby (0.3.6)
 
 PLATFORMS
@@ -89,20 +89,21 @@ DEPENDENCIES
   minitest
   nokogiri
   nori
-  ovirt-engine-sdk
+  ovirt-engine-sdk (>= 4.1.8)
   pg
   process_helper
   programr!
   puppet
   rake
-  rdoc
+  rdoc (>= 4.3.0)
   redcarpet
   rmagick
   rqrcode
   sshkey
   wordlist
   yard
+  zip
   zipruby
 
 BUNDLED WITH
-   1.15.4
+   1.17.3
