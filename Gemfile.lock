@@ -61,7 +61,7 @@ GEM
     rake (11.1.2)
     rdoc (4.2.2)
       json (~> 1.4)
-    redcarpet (3.4.0)
+    redcarpet (3.5.1)
     rmagick (2.16.0)
     rqrcode (0.10.1)
       chunky_png (~> 1.0)
@@ -74,6 +74,7 @@ GEM
     wordlist (0.1.1)
       spidr (~> 0.2)
     yard (0.8.7.6)
+    zip (2.0.2)
     zipruby (0.3.6)
 
 PLATFORMS
@@ -96,13 +97,14 @@ DEPENDENCIES
   puppet
   rake
   rdoc
-  redcarpet
+  redcarpet (>= 3.5.1)
   rmagick
   rqrcode
   sshkey
   wordlist
   yard
+  zip
   zipruby
 
 BUNDLED WITH
-   1.15.4
+   1.17.3
