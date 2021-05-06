@@ -25,6 +25,6 @@ gem 'ovirt-engine-sdk'
 group :test, :development do
   gem 'minitest'
   gem 'rake'
-  gem 'rdoc'
+  gem 'rdoc', '>= 6.3.0'
   gem 'yard'
 end
