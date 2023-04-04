@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 #production gems go here
-gem 'nokogiri'
-gem 'puppet'
+gem 'nokogiri', '>= 1.13.9'
+gem 'puppet', '>= 6.25.1'
 gem 'librarian-puppet'
 gem 'wordlist'
 gem 'faker'
 gem 'forgery'
-gem 'redcarpet'
+gem 'redcarpet', '>= 3.5.1'
 gem 'rqrcode'
 gem 'mini_exiftool_vendored'
 gem 'rmagick'
@@ -24,7 +24,7 @@ gem 'ovirt-engine-sdk'
 #development only gems go here
 group :test, :development do
   gem 'minitest'
-  gem 'rake'
-  gem 'rdoc'
-  gem 'yard'
+  gem 'rake', '>= 12.3.3'
+  gem 'rdoc', '>= 6.3.1'
+  gem 'yard', '>= 0.9.20'
 end
