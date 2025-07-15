@@ -2,8 +2,8 @@ source 'https://rubygems.org'
 #production gems go here
 gem 'nokogiri'
 gem 'puppet'
-gem 'librarian-puppet'
-gem 'wordlist'
+gem 'librarian-puppet', '>= 3.0.0'
+gem 'wordlist', '>= 1.0.0'
 gem 'faker'
 gem 'forgery'
 gem 'redcarpet'
@@ -19,7 +19,7 @@ gem 'cinch'
 gem 'nori'
 gem 'programr', :git => "http://github.com/robertjwhitney/programr.git"
 gem 'process_helper'
-gem 'ovirt-engine-sdk'
+gem 'ovirt-engine-sdk', '>= 4.1.9'
 
 #development only gems go here
 group :test, :development do
